@@ -12,7 +12,7 @@ class _LoadToAppPageState extends State<LoadToAppPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(new Duration(seconds: 5), () {
+    Future.delayed(new Duration(seconds: 4), () {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),
