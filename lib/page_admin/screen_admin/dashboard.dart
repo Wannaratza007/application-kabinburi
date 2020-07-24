@@ -314,7 +314,7 @@ class _DashboardState extends State<Dashboard> {
       var response = await client.post('$api/community');
       if (response.statusCode == 200) {
         Map<String, dynamic> map = json.decode(response.body);
-        List<dynamic> data = map["result"];
+        dynamic data = map["result"];
         for (var mapdata in data) {
           setState(() {
             CommunityModel _listCommunity = CommunityModel.fromJson(mapdata);
