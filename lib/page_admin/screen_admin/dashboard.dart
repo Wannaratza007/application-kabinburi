@@ -29,11 +29,11 @@ class _DashboardState extends State<Dashboard> {
   }
 
   final List<String> imagesSlider = [
-    "https://scontent.fbkk2-8.fna.fbcdn.net/v/t1.0-9/85007490_3497405486999079_7082165706896179200_n.jpg?_nc_cat=102&_nc_sid=110474&_nc_eui2=AeGzwZAJQg0rDJ_kQDCPS80TQJfoMSqAiXBAl-gxKoCJcI_Rrk0FAC4evwrZTmDa8848gW4oS5zvfd7TxOWZuoMH&_nc_oc=AQlr0WdNY4aru5jsHJL1nye-px-AkJxnMEw4IJUw1WHExw_jJ-RcHHZSPWvxUhH5D5g&_nc_ht=scontent.fbkk2-8.fna&oh=738f8be94a35aa818ef4b98dcfa2904d&oe=5F047579 one",
-    "https://scontent.fbkk2-7.fna.fbcdn.net/v/t1.0-9/87995869_3568528093220151_7988996125291970560_n.jpg?_nc_cat=106&_nc_sid=110474&_nc_eui2=AeHcvPLwQItYpvWuCUM8nmM2F46d77X8kxoXjp3vtfyTGuyVKlhB6V20vKJ7b0xi2ksEv2wTXPscCIO0-hoTHnHD&_nc_oc=AQnYgCfOTJ0suCpiRhlVCfQmFHTFY4Xw_GHtlvGG4FwPF0fq2zLM77gdqzdkwqoHpbU&_nc_ht=scontent.fbkk2-7.fna&oh=8acd5e0c9611ba31a2bce68a392096cf&oe=5F0444ED two",
-    "https://scontent.fbkk2-7.fna.fbcdn.net/v/t1.0-9/91020337_3662750023797957_3230056392912011264_n.jpg?_nc_cat=108&_nc_sid=110474&_nc_eui2=AeH2mzPwRimDByPastpR_3BAh97tcjUiWLSH3u1yNSJYtDDyz4MVW46dXbeATB0bRu6ibkuP8LKwnqE49YkQ8Mwu&_nc_oc=AQlZ5Evkwc3RAUmC7EnOFBIGQCPUGOE6zKwXKyprzpp2aLlnuMz38Nfj_L1XtInif-s&_nc_ht=scontent.fbkk2-7.fna&oh=50efbe76bc9a14dda85b48ad4212f365&oe=5F03F386 three",
-    "https://scontent.fbkk2-8.fna.fbcdn.net/v/t1.0-9/93825237_3731883583551267_4711030660683268096_n.jpg?_nc_cat=103&_nc_sid=110474&_nc_eui2=AeEZTLs3OpGmZnFfr-rdaLLmvt5mlHx8d0--3maUfHx3T2fE2El2_5X7U3sUtdbRXNaBmp222sJgGgI2kaOApMb0&_nc_oc=AQmdfVaUOUlCx1EK8ufZ7Ht3zYTMJPHwMQucD3rUkbqFHG_kd1197ynLgYOUg99HYYA&_nc_ht=scontent.fbkk2-8.fna&oh=277c40a1070eca7686ddb11b6fcb1e9b&oe=5F060F58 four",
-    "https://scontent.fbkk2-5.fna.fbcdn.net/v/t1.0-9/92827225_3731887106884248_1109482475958042624_o.jpg?_nc_cat=110&_nc_sid=110474&_nc_eui2=AeHGQSu8KNHiP-7r83Fca86Xa1I8t_bKCBVrUjy39soIFZ3RozrbDuc_x6mKC7h3X5lax0Ll_KD3Jl_qkyRDeKgt&_nc_oc=AQmSFgo1HJzk50IwEvffpflVQ0hX1V259_3vxZC8VjnYabBvZ0Hytb1JWbdDB-lVN6E&_nc_ht=scontent.fbkk2-5.fna&oh=d5c5d72dda44fed852d6d95446709035&oe=5F0401EB five",
+    "https://4.bp.blogspot.com/-eV7KFWYOhgM/UMw4AOJb79I/AAAAAAAAACQ/4Dtc5yqY32Y/w1200-h630-p-k-no-nu/DSC06567.JPG",
+    "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/114218776_273508990603681_1479752560853370431_o.jpg?_nc_cat=111&_nc_sid=0be424&_nc_eui2=AeELqNeYLGPhOkqsacwgUERa0sFPARmOVwLSwU8BGY5XAq2IdYZ2R_iM8X6KcTp5rhHrSSLPrSmhv-_gVkcIzZlJ&_nc_ohc=709V2zLWxmgAX8PQXXS&_nc_ht=scontent.fbkk5-3.fna&oh=bc47e3c6beb7babb58bdea76e6903dd0&oe=5F417860",
+    "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116696662_276896856931561_9068128738272014893_o.jpg?_nc_cat=104&_nc_sid=0be424&_nc_eui2=AeE0DH8eDa8c1cBJNnwvBYXHgMhyQHtysGWAyHJAe3KwZcGr-zETeiKugqIWhyyOVKJvMLvvuSEn2tyr_tWqUiy0&_nc_ohc=1WAGz6pvuSUAX-cWNkF&_nc_ht=scontent.fbkk5-5.fna&oh=928a9a025feb54bfee914b11dda7192d&oe=5F482FAD",
+    "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116637131_276950443592869_1220570832513759601_o.jpg?_nc_cat=104&_nc_sid=e007fa&_nc_eui2=AeEz0YE8wAs7EZzdKVMqFG06Kn4ze2ktuQ8qfjN7aS25D6naBA-hKoxHpbyxvD2S0cg0M-VZ-_mNJjIJmzUZUsxh&_nc_ohc=Zr1MCiSyJpoAX9XEdTe&_nc_ht=scontent.fbkk5-5.fna&oh=d6fce7642f2b961a6c389124f03805e0&oe=5F469DF5",
+    // "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/114218776_273508990603681_1479752560853370431_o.jpg?_nc_cat=111&_nc_sid=0be424&_nc_eui2=AeELqNeYLGPhOkqsacwgUERa0sFPARmOVwLSwU8BGY5XAq2IdYZ2R_iM8X6KcTp5rhHrSSLPrSmhv-_gVkcIzZlJ&_nc_ohc=709V2zLWxmgAX8PQXXS&_nc_ht=scontent.fbkk5-3.fna&oh=bc47e3c6beb7babb58bdea76e6903dd0&oe=5F417860",
   ];
   @override
   Widget build(BuildContext context) {
@@ -92,7 +92,7 @@ class _DashboardState extends State<Dashboard> {
                     builder: (context) => PageWebView(),
                     settings: RouteSettings(
                       arguments: {
-                        "title": "งานกิจกกรม",
+                        "title": "ข่าวสาร",
                         "url": _listMessages[index].link
                       },
                     ),
@@ -261,10 +261,10 @@ class _DashboardState extends State<Dashboard> {
         itemBuilder: (context, index) {
           return GestureDetector(
             child: Container(
-              decoration: BoxDecoration(
-                color: mainColor,
-                borderRadius: BorderRadius.circular(12.0),
-              ),
+              // decoration: BoxDecoration(
+              //   color: mainColor,
+              //   borderRadius: BorderRadius.circular(12.0),
+              // ),
               // child: CachedNetworkImage(
               //   progressIndicatorBuilder: (context, url, progress) =>
               //       CircularProgressIndicator(
@@ -273,13 +273,14 @@ class _DashboardState extends State<Dashboard> {
               //   imageUrl: '',
               // ),
 
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(10),
-              //   image: DecorationImage(
-              //     image: NetworkImage(imagesSlider[index]),
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(width: 3.0, color: Colors.grey),
+                image: DecorationImage(
+                  image: NetworkImage(imagesSlider[index]),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
             onTap: () {},
           );

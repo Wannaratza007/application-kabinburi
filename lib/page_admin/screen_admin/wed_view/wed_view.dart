@@ -17,7 +17,11 @@ class _PageWebViewState extends State<PageWebView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(weblink["title"]),
-          backgroundColor: primaryColor,
+          leading: IconButton(
+            color: Colors.black,
+            icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         body: WebView(
           initialUrl: weblink["url"],

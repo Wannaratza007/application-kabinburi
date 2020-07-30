@@ -5,6 +5,19 @@ var indexColor = Colors.lightBlue[600];
 var currentIndexColor = Colors.red[600];
 var mainColor = Colors.grey[300];
 
+Widget textAppBar() {
+  return Center(
+    child: Text(
+      'KABINBURI',
+      style: TextStyle(
+        fontSize: 33.0,
+        fontWeight: FontWeight.w500,
+        fontFamily: 'MitrSemiBold',
+      ),
+    ),
+  );
+}
+
 Widget progress() {
   return Container(
     margin: EdgeInsets.only(top: 30.0, bottom: 15.0),

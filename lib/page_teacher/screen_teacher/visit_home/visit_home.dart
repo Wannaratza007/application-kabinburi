@@ -1,20 +1,30 @@
 import 'package:KABINBURI/models/student_by_id_model.dart';
+import 'package:KABINBURI/page_teacher/screen_teacher/visit_home/signature/signature.dart';
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:image_picker/image_picker.dart';
+import 'package:sweetalert/sweetalert.dart';
+
 // ignore: must_be_immutable
-class ViewDataVisit extends StatefulWidget {
+class VisitHome extends StatefulWidget {
   int id;
-  ViewDataVisit({Key key, this.id}) : super(key: key);
+  VisitHome({Key key, this.id}) : super(key: key);
   @override
-  _ViewDataVisitState createState() => _ViewDataVisitState();
+  _VisitHomeState createState() => _VisitHomeState();
 }
 
-class _ViewDataVisitState extends State<ViewDataVisit> {
+class _VisitHomeState extends State<VisitHome> {
+  final _formKey = GlobalKey<FormState>();
+  var behaviorD = TextEditingController();
+  var behaviorNotD = TextEditingController();
+  var problem = TextEditingController();
+  var suggestion = TextEditingController();
   File _image;
   List<DataStudentByID> getstudents = List();
 
@@ -45,36 +55,63 @@ class _ViewDataVisitState extends State<ViewDataVisit> {
     }
   }
 
+  Future getImage(String type) async {
+    var image;
+    if (type == 'camera') {
+      image = await ImagePicker.pickImage(source: ImageSource.camera);
+      print(image.path);
+      if (image != null && image.path != null) {
+        GallerySaver.saveImage(image.path, albumName: 'VisitHome');
+      }
+    } else if (type == 'gallery') {
+      image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    }
+    if (image == null) return null;
+    setState(() {
+      _image = image;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('บันทึกการเยี่ยมบ้าน'),
-        actions: <Widget>[prints()],
-        leading: iconBack(context),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(8.0),
-        child: getstudents.length == null ? progress() : listdata(),
+      appBar: buildAppBar(context),
+      body: Form(
+        key: _formKey,
+        child: Container(
+          padding: EdgeInsets.all(8.0),
+          child: getstudents.length == null ? progress() : listdata(),
+        ),
       ),
     );
   }
-    Widget iconBack(BuildContext context) {
+
+  Widget buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text('เยี่ยมบ้านนักศึกษา'),
+      leading: iconBack(context),
+      actions: <Widget>[
+        Container(
+          margin: EdgeInsets.only(right: 10.0),
+          child: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SignturePage(),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget iconBack(BuildContext context) {
     return IconButton(
       color: Colors.black,
       icon: Icon(Icons.arrow_back_ios, color: Colors.white),
       onPressed: () => Navigator.of(context).pop(),
-    );
-  }
-
-  Widget prints() {
-    return Container(
-      margin: EdgeInsets.only(right: 10.0),
-      child: IconButton(
-        tooltip: 'ปริ้นรูปภาพ',
-        icon: Icon(Icons.print),
-        onPressed: () {},
-      ),
     );
   }
 
@@ -100,11 +137,60 @@ class _ViewDataVisitState extends State<ViewDataVisit> {
                   selecteTime(),
                   titleSub('รูปภาพ'),
                   showimages(),
+                  titleSub('Commennt พฤติกรรมนักศึกษา'),
+                  inputcomment(behaviorD, 'พฤติกรรมด้านที่ดี'),
+                  inputcomment(behaviorNotD, 'พฤติกรรมด้านที่ต้องปรับปรุง'),
+                  titleSub('ปัญหา / แนวทางการแก้ปัญหา'),
+                  inputcomment(problem, 'แนวทางการแก้ปัญหาาร่วมกันผู้ปกครอง'),
+                  titleSub('ข้อเสนอแนะ'),
+                  inputcomment(
+                      suggestion, 'แนวทางการแก้ปัญหาาร่วมกันผู้ปกครอง'),
+                  buttonSVAE(),
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buttonSVAE() {
+    return Container(
+      margin: EdgeInsets.all(10.0),
+      padding: EdgeInsets.all(8.0),
+      height: 65.0,
+      child: RaisedButton(
+        child: Text(
+          'SVAE',
+          style: TextStyle(
+            fontSize: 24.0,
+          ),
+        ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        textColor: Colors.white,
+        color: Colors.blue,
+        onPressed: () {
+          SweetAlert.show(context,
+              subtitle: "คุณต้องการบันทึกข้อมูลหรือไม่ ?",
+              style: SweetAlertStyle.confirm,
+              showCancelButton: true, onPress: (bool isConfirm) {
+            if (isConfirm) {
+              SweetAlert.show(context,
+                  subtitle: "Save...", style: SweetAlertStyle.loading);
+              new Future.delayed(new Duration(seconds: 2), () {
+                SweetAlert.show(context,
+                    subtitle: "Success!", style: SweetAlertStyle.success);
+              });
+            } else {
+              SweetAlert.show(context,
+                  subtitle: "Canceled!", style: SweetAlertStyle.error);
+            }
+            // return false to keep dialog
+            return false;
+          });
+        },
       ),
     );
   }
@@ -232,10 +318,39 @@ class _ViewDataVisitState extends State<ViewDataVisit> {
           ? Container(
               decoration: BoxDecoration(color: mainColor),
               width: 270.0,
-              child: Icon(
-                Icons.image,
-                size: 80.0,
-                color: Colors.grey,
+              child: IconButton(
+                icon: Icon(
+                  Icons.image,
+                  size: 100.0,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      child: Wrap(
+                        children: <Widget>[
+                          ListTile(
+                            leading: new Icon(Icons.camera),
+                            title: new Text('Camara'),
+                            onTap: () => {
+                              getImage('camera'),
+                              Navigator.pop(context),
+                            },
+                          ),
+                          new ListTile(
+                            leading: new Icon(Icons.image),
+                            title: new Text('Gallery'),
+                            onTap: () => {
+                              getImage('gallery'),
+                              Navigator.pop(context),
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             )
           : Image.file(_image),
@@ -276,6 +391,22 @@ class _ViewDataVisitState extends State<ViewDataVisit> {
             style: TextStyle(fontSize: 19.0, fontWeight: FontWeight.w600),
           )),
         ],
+      ),
+    );
+  }
+
+  Widget inputcomment(TextEditingController controller, String hini) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+      child: TextFormField(
+        controller: controller,
+        style: TextStyle(fontSize: 16.0),
+        decoration: InputDecoration(
+          hintText: hini,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
       ),
     );
   }

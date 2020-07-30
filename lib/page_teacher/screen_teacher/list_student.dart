@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:KABINBURI/page_teacher/screen_teacher/view_Visit.dart';
+import 'package:KABINBURI/page_teacher/screen_teacher/visit_home/visit_home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -174,49 +175,82 @@ class _DataStudentState extends State<DataStudent> {
                               style: testlistsub),
                         ],
                       ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 5.0),
-                        child: Row(
-                          children: <Widget>[
-                            Text('แผนกวิชา', style: testlistsub),
-                            SizedBox(width: 8.0),
-                            Text(getstudents[index].deparment,
-                                style: testlistsub),
-                          ],
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            getstudents[index].deparment,
+                            style: testlistsub,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.more_vert, size: 35.0),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => Container(
+                          child: Wrap(
+                            children: <Widget>[
+                              ListTile(
+                                leading:
+                                    new Icon(Icons.assignment_turned_in),
+                                title: new Text('เยี่ยมบ้าน'),
+                                onTap: () => {
+                                  Navigator.of(context).pop(),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VisitHome(
+                                          id: getstudents[index].studenID),
+                                    ),
+                                  )
+                                },
+                              ),
+                              ListTile(
+                                leading: new Icon(Icons.assignment_ind),
+                                title: new Text('บันทึกการเยี่ยมบ้าน'),
+                                onTap: () => {
+                                  Navigator.of(context).pop(),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ViewDataVisit(
+                                          id: getstudents[index].studenID),
+                                    ),
+                                  )
+                                },
+                              ),
+                              new ListTile(
+                                leading: new Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                title: new Text('ลบข้อมูล'),
+                                onTap: () => {
+                                  Navigator.of(context).pop(),
+                                  SweetAlert.show(context,
+                                      title: "คุณต้องการลบข้อมูล",
+                                      subtitle:
+                                          "${getstudents[index].prefixSTD} ${getstudents[index].firstNameSTD}   ${getstudents[index].lastNameSTD}   หรือไม่ ?",
+                                      style: SweetAlertStyle.confirm,
+                                      showCancelButton: true,
+                                      onPress: (bool isConfirm) {
+                                    if (isConfirm) {
+                                      apiDeleteStudent(
+                                          getstudents[index].studenID);
+                                      return false;
+                                    }
+                                  })
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                  trailing: Wrap(
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red, size: 25.0),
-                        onPressed: () {
-                          SweetAlert.show(context,
-                              title: "คุณต้องการลบข้อมูล",
-                              subtitle:
-                                  "${getstudents[index].prefixSTD} ${getstudents[index].firstNameSTD}   ${getstudents[index].lastNameSTD}   หรือไม่ ?",
-                              style: SweetAlertStyle.confirm,
-                              showCancelButton: true,
-                              onPress: (bool isConfirm) {
-                            if (isConfirm) {
-                              apiDeleteStudent(getstudents[index].studenID);
-                              return false;
-                            }
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ViewDataVisit(id: getstudents[index].studenID),
-                      ),
-                    );
-                  },
                 ),
               ),
             ),

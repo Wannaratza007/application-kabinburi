@@ -38,7 +38,9 @@ class _MainTeacherPassState extends State<MainTeacherPass> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: primaryColor,
         automaticallyImplyLeading: false,
+        title: textAppBar(),
       ),
       body: pageIndex(_pageIndex),
       bottomNavigationBar: BottomNavigationBar(

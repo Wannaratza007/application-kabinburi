@@ -40,6 +40,7 @@ class _MainAdminPageState extends State<MainAdminPage> {
       appBar: AppBar(
         backgroundColor: primaryColor,
         automaticallyImplyLeading: false,
+        title: textAppBar(),
       ),
       body: pageIndex(_pageIndex),
       bottomNavigationBar: BottomNavigationBar(

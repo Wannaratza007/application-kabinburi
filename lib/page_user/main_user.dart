@@ -40,6 +40,7 @@ class _MainUsersPageState extends State<MainUsersPage> {
       appBar: AppBar(
         backgroundColor: primaryColor,
         automaticallyImplyLeading: false,
+        title: textAppBar(),
       ),
       body: callPage(_homepageindex),
       bottomNavigationBar: BottomNavigationBar(

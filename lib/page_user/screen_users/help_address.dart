@@ -28,17 +28,21 @@ class HelpAddress extends StatelessWidget {
             name(),
             title('ที่ตั้ง'),
             textsud(
-                '202 หมู่ 3 ต.ลาดตะเคียน ตำบลลาดตะเคียน อำเภอกบินทร์บุรี ปราจีนบุรี 25110'),
+                '202 หมู่ 3 ต.ลาดตะเคียน ตำบลลาดตะเคียน อำเภอกบินทร์บุรี ปราจีนบุรี 25110',
+                context),
             title('ติดต่อ'),
-            textsud('เบอร์โทรศัพท์: 037 625 220  FACEBOOK: วิทยาลัยการอาชีพกบินทร์บุรี'),
+            textsud(
+                'เบอร์โทรศัพท์: 037 625 220  FACEBOOK: วิทยาลัยการอาชีพกบินทร์บุรี',
+                context),
           ],
         ),
       ),
     );
   }
 
-  Widget textsud(String text) {
+  Widget textsud(String text, BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.only(left: 18.0, top: 8.0, right: 5.0),
       child: Text(
         text,

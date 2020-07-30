@@ -27,34 +27,34 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    checkpreferences();
+    // checkpreferences();
   }
 
-  Future<void> checkpreferences() async {
-    try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String status = preferences.getString('status');
-      print(status);
-      if (status != null && status.isNotEmpty) {
-        if (status == 'admin') {
-          routepage(MainAdminPage());
-        } else if (status == 'teacher') {
-          routepage(MainTeacherPass());
-        } else if (status == 'user') {
-          routepage(MainUsersPage());
-        } else {
-          SweetAlert.show(context,
-              subtitle: "Error: Unknown status!", style: SweetAlertStyle.error);
-        }
-      }
-    } catch (e) {}
-  }
+  // Future<void> checkpreferences() async {
+  //   try {
+  //     SharedPreferences preferences = await SharedPreferences.getInstance();
+  //     String status = preferences.getString('status');
+  //     print('status   $status');
+  //     if (status != null && status.isNotEmpty) {
+  //       if (status == 'admin') {
+  //         routepage(MainAdminPage());
+  //       } else if (status == 'teacher') {
+  //         routepage(MainTeacherPass());
+  //       } else if (status == 'user') {
+  //         routepage(MainUsersPage());
+  //       } else {
+  //         SweetAlert.show(context,
+  //             subtitle: "Error: Unknown status!", style: SweetAlertStyle.error);
+  //       }
+  //     }
+  //   } catch (e) {}
+  // }
 
-  void routepage(pages) {
-    MaterialPageRoute routesGoToPage =
-        MaterialPageRoute(builder: (context) => pages);
-    Navigator.pushAndRemoveUntil(context, routesGoToPage, (route) => false);
-  }
+  // void routepage(pages) {
+  //   MaterialPageRoute routesGoToPage =
+  //       MaterialPageRoute(builder: (context) => pages);
+  //   Navigator.pushAndRemoveUntil(context, routesGoToPage, (route) => false);
+  // }
 
   Future<void> checkLogin(username, password) async {
     print(username);
@@ -69,12 +69,13 @@ class _LoginPageState extends State<LoginPage> {
         if (data.length != 0) {
           for (var map in data) {
             UserModel usermodel = new UserModel.fromJson(map);
+            var status = usermodel.status;
             if (password == usermodel.password) {
-              if (usermodel.status == 'admin') {
+              if (status == 'admin') {
                 routeToPage(MainAdminPage(), usermodel);
-              } else if (usermodel.status == 'teacher') {
+              } else if (status == 'teacher') {
                 routeToPage(MainTeacherPass(), usermodel);
-              } else if (usermodel.status == 'user') {
+              } else if (status == 'user') {
                 routeToPage(MainUsersPage(), usermodel);
               } else {
                 SweetAlert.show(context,

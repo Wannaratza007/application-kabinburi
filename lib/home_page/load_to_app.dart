@@ -1,5 +1,10 @@
 import 'package:KABINBURI/home_page/login.dart';
+import 'package:KABINBURI/page_admin/main_admin.dart';
+import 'package:KABINBURI/page_teacher/main_teacher.dart';
+import 'package:KABINBURI/page_user/main_user.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class LoadToAppPage extends StatefulWidget {
   LoadToAppPage({Key key}) : super(key: key);
@@ -13,11 +18,37 @@ class _LoadToAppPageState extends State<LoadToAppPage> {
   void initState() {
     super.initState();
     Future.delayed(new Duration(seconds: 4), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
+      checkpreferences();
+      // routepage(LoginPage());
     });
+  }
+
+  Future<void> checkpreferences() async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String status = preferences.getString('status');
+      print('status  $status');
+      if (status != null && status.isNotEmpty) {
+        if (status == 'admin') {
+          routepage(MainAdminPage());
+        } else if (status == 'teacher') {
+          routepage(MainTeacherPass());
+        } else if (status == 'user') {
+          routepage(MainUsersPage());
+        } else {
+          SweetAlert.show(context,
+              subtitle: "Error: Unknown status!", style: SweetAlertStyle.error);
+        }
+      } else {
+        routepage(LoginPage());
+      }
+    } catch (e) {}
+  }
+
+  void routepage(pages) {
+    MaterialPageRoute routesGoToPage =
+        MaterialPageRoute(builder: (context) => pages);
+    Navigator.pushAndRemoveUntil(context, routesGoToPage, (route) => false);
   }
 
   @override
