@@ -21,56 +21,27 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController username = TextEditingController();
-  TextEditingController password = TextEditingController();
+  final username = TextEditingController();
+  final password = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    // checkpreferences();
-  }
-
-  // Future<void> checkpreferences() async {
-  //   try {
-  //     SharedPreferences preferences = await SharedPreferences.getInstance();
-  //     String status = preferences.getString('status');
-  //     print('status   $status');
-  //     if (status != null && status.isNotEmpty) {
-  //       if (status == 'admin') {
-  //         routepage(MainAdminPage());
-  //       } else if (status == 'teacher') {
-  //         routepage(MainTeacherPass());
-  //       } else if (status == 'user') {
-  //         routepage(MainUsersPage());
-  //       } else {
-  //         SweetAlert.show(context,
-  //             subtitle: "Error: Unknown status!", style: SweetAlertStyle.error);
-  //       }
-  //     }
-  //   } catch (e) {}
-  // }
-
-  // void routepage(pages) {
-  //   MaterialPageRoute routesGoToPage =
-  //       MaterialPageRoute(builder: (context) => pages);
-  //   Navigator.pushAndRemoveUntil(context, routesGoToPage, (route) => false);
-  // }
-
-  Future<void> checkLogin(username, password) async {
-    print(username);
-    print(password);
+  Future checkLogin() async {
     var client = http.Client();
+    print('username' + username.text.trim());
+    print('password' + password.text.trim());
+    var user = username.text.trim();
+    var pass = password.text.trim();
     try {
-      var response = await client.post('$api/login',
-          body: {'username': username, 'password': password});
+      var _obj = {'username': user, 'password': pass};
+      var response = await client.post('$api/login', body: _obj);
       if (response.statusCode == 200) {
-        Map<String, dynamic> map = json.decode(response.body);
-        List<dynamic> data = map["result"];
-        if (data.length != 0) {
-          for (var map in data) {
+        Map<String, dynamic> datas = json.decode(response.body);
+        List<dynamic> data = datas["result"];
+        if (datas['status'] == true) {
+          for (final map in data) {
             UserModel usermodel = new UserModel.fromJson(map);
             var status = usermodel.status;
-            if (password == usermodel.password) {
+            print('status' + status);
+            if (pass == usermodel.password) {
               if (status == 'admin') {
                 routeToPage(MainAdminPage(), usermodel);
               } else if (status == 'teacher') {
@@ -78,22 +49,27 @@ class _LoginPageState extends State<LoginPage> {
               } else if (status == 'user') {
                 routeToPage(MainUsersPage(), usermodel);
               } else {
-                SweetAlert.show(context,
-                    subtitle: "กรุณาตรวจสอบข้อมูลค่ะ...!",
-                    style: SweetAlertStyle.error);
+                SweetAlert.show(
+                  context,
+                  style: SweetAlertStyle.error,
+                  subtitle: "error 404",
+                );
               }
             } else {
-              SweetAlert.show(context,
-                  style: SweetAlertStyle.error,
-                  title: "กรุณาตรวจสอบข้อมูลค่ะ...",
-                  subtitle: "กรุณาตรวจ username && password");
+              SweetAlert.show(
+                context,
+                style: SweetAlertStyle.error,
+                subtitle: "ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง",
+              );
             }
           }
         } else {
-          SweetAlert.show(context,
-              style: SweetAlertStyle.error, title: "กรุณาตรวจสอบข้อมูลค่ะ...");
+          SweetAlert.show(
+            context,
+            style: SweetAlertStyle.error,
+            subtitle: "ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง",
+          );
         }
-
         return data;
       } else {}
     } finally {
@@ -101,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> routeToPage(Widget page, UserModel userModel) async {
+  Future routeToPage(Widget page, UserModel userModel) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setInt('id', userModel.userID);
     preferences.setString('firstname', userModel.firstname);
@@ -289,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            checkLogin(username.text.trim(), password.text.trim());
+            checkLogin();
           }
         },
       ),

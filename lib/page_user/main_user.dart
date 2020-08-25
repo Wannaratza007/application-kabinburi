@@ -1,7 +1,6 @@
 import 'package:KABINBURI/page_admin/screen_admin/dashboard.dart';
 import 'package:KABINBURI/page_user/screen_users/professor.dart';
 import 'package:KABINBURI/page_user/screen_users/profile_user.dart';
-import 'package:KABINBURI/page_user/screen_users/timelearn.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:flutter/material.dart';
 
@@ -20,13 +19,13 @@ class _MainUsersPageState extends State<MainUsersPage> {
       case 0:
         return Dashboard();
         break;
+      // case 1:
+      //   return TimeLearn();
+      //   break;
       case 1:
-        return TimeLearn();
-        break;
-      case 2:
         return Professor();
         break;
-      case 3:
+      case 2:
         return PageProfileUser();
         break;
       default:
@@ -53,10 +52,10 @@ class _MainUsersPageState extends State<MainUsersPage> {
             title: Text(''),
             icon: Icon(Icons.home, size: 30),
           ),
-          BottomNavigationBarItem(
-            title: Text(''),
-            icon: Icon(Icons.date_range, size: 30),
-          ),
+          // BottomNavigationBarItem(
+          //   title: Text(''),
+          //   icon: Icon(Icons.date_range, size: 30),
+          // ),
           BottomNavigationBarItem(
             title: Text(''),
             icon: Icon(Icons.assignment_ind, size: 30),

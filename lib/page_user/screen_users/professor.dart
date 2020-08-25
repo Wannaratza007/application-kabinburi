@@ -51,7 +51,7 @@ class _ProfessorState extends State<Professor> {
     _refreshController.loadComplete();
   }
 
-  Future<void> apiGetDataTeacher() async {
+  Future apiGetDataTeacher() async {
     var client = http.Client();
     try {
       var _obj = {

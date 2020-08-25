@@ -33,8 +33,6 @@ dependencies:
   image_picker: ^0.6.7+4
   signature: ^3.1.1
   flutter_speed_dial: ^1.2.5
-  # camera: ^0.5.8+2
-  multi_image_picker: ^4.6.7
   webview_flutter: ^0.3.22+1
   flutter_icons: ^1.1.0
   carousel_slider: ^2.2.1
@@ -45,6 +43,15 @@ dependencies:
   gallery_saver: ^2.0.1
   sweetalert: ^0.0.1
   flutter_phone_direct_caller: ^1.0.1
+  multi_image_picker: ^4.7.10
+  printing: ^3.5.0
+  pdf: ^1.10.1
+  path_provider: ^1.6.11
+  flutter_full_pdf_viewer: ^1.0.6
+  flutter_html_to_pdf: ^0.5.2
+  # cloud_firestore: ^0.14.0
+  firebase_core: ^0.5.0
+  firebase_auth: ^0.18.0
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +80,7 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+
   fonts:
     - family: OpenSans
       fonts:

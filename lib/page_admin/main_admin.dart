@@ -38,7 +38,6 @@ class _MainAdminPageState extends State<MainAdminPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primaryColor,
         automaticallyImplyLeading: false,
         title: textAppBar(),
       ),

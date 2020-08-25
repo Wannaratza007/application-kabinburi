@@ -18,7 +18,7 @@ class _AddNewCommunotyState extends State<AddNewCommunoty> {
   TextEditingController imageGoogle = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> apiAddCommunity(imageShowTitle, textTitle, imageGoogle) async {
+  Future apiAddCommunity(imageShowTitle, textTitle, imageGoogle) async {
     var client = http.Client();
     try {
       var _obj = {

@@ -26,12 +26,14 @@ class DataStudentByID {
   String imagesOne;
   String imagesTwo;
   String imagesThree;
+  String imageMap;
   String signture;
   String behaviorD;
   String behaviorNotD;
   String problem;
   String suggestion;
   String timeVisit;
+  String visitBy;
 
   DataStudentByID(
       {this.studenID,
@@ -61,12 +63,14 @@ class DataStudentByID {
       this.imagesOne,
       this.imagesTwo,
       this.imagesThree,
+      this.imageMap,
       this.signture,
       this.behaviorD,
       this.behaviorNotD,
       this.problem,
       this.suggestion,
-      this.timeVisit});
+      this.timeVisit,
+      this.visitBy});
 
   DataStudentByID.fromJson(Map<String, dynamic> json) {
     studenID = json['studenID'];
@@ -98,12 +102,14 @@ class DataStudentByID {
     imagesOne = json['ImagesOne'];
     imagesTwo = json['ImagesTwo'];
     imagesThree = json['ImagesThree'];
+    imageMap = json['image_map'];
     signture = json['Signture'];
     behaviorD = json['behaviorD'];
     behaviorNotD = json['behaviorNotD'];
     problem = json['problem'];
     suggestion = json['suggestion'];
     timeVisit = json['TimeVisit'];
+    visitBy = json['visit_By'];
   }
 
   Map<String, dynamic> toJson() {
@@ -137,12 +143,14 @@ class DataStudentByID {
     data['ImagesOne'] = this.imagesOne;
     data['ImagesTwo'] = this.imagesTwo;
     data['ImagesThree'] = this.imagesThree;
+    data['image_map'] = this.imageMap;
     data['Signture'] = this.signture;
     data['behaviorD'] = this.behaviorD;
     data['behaviorNotD'] = this.behaviorNotD;
     data['problem'] = this.problem;
     data['suggestion'] = this.suggestion;
     data['TimeVisit'] = this.timeVisit;
+    data['visit_By'] = this.visitBy;
     return data;
   }
 }

@@ -21,6 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController phone = TextEditingController();
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
+  bool signupsuccess = false;
 
   Widget _inputTF(
     String text,
@@ -92,8 +93,10 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            apiCkeckAccount(firstname.text.trim(), lastname.text.trim(),
-                username.text.trim(), password.text.trim());
+            apiCkeckAccount().then((value) => {
+                  if (value == true && signupsuccess == true)
+                    {Navigator.of(context).pop()}
+                });
           }
         },
       ),
@@ -120,32 +123,35 @@ class _RegisterPageState extends State<RegisterPage> {
             fontFamily: 'OpenSans',
           ),
         ),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => Navigator.of(context).pop(),
       ),
     );
   }
 
-  Future<void> apiSignup(firstname, lastname, username, password) async {
+  Future apiSignup() async {
     var client = http.Client();
     var _obj = {
-      'firstname': firstname,
-      'lastname': lastname,
-      'username': username,
-      'password': password,
+      'firstname': firstname.text.trim(),
+      'lastname': lastname.text.trim(),
+      'username': username.text.trim(),
+      'password': password.text.trim(),
     };
+    var obj = jsonEncode(_obj);
     try {
-      var response = await client.post('$api/signin', body: _obj);
+      var response = await client.post('$api/signin', body: obj);
       if (response.statusCode == 200) {
         Map<String, dynamic> data = json.decode(response.body);
         if (data['status'] == true) {
           SweetAlert.show(context,
               subtitle: "สมัครผู้ใช้งานสำเร็จ", style: SweetAlertStyle.success);
-          Future.delayed(new Duration(milliseconds: 800), () {
+          Future.delayed(new Duration(microseconds: 2500), () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => LoginPage()),
             );
           });
+
+          return true;
         } else {
           SweetAlert.show(context,
               style: SweetAlertStyle.error, title: "กรุณาลองอีกครั้ง...");
@@ -159,19 +165,26 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future<void> apiCkeckAccount(firstname, lastname, username, password) async {
+  Future apiCkeckAccount() async {
     var client = http.Client();
     try {
       var _obj = {
-        'firstname': firstname,
-        'username': username,
+        'firstname': firstname.text.trim(),
+        'username': username.text.trim(),
       };
+      // var obj = jsonEncode(_obj);
       print(_obj);
       var response = await client.post('$api/checkuser', body: _obj);
       if (response.statusCode == 200) {
         Map<String, dynamic> data = json.decode(response.body);
         if (data["status"] == true) {
-          apiSignup(firstname, lastname, username, password);
+          apiSignup().then((value) => {
+                if (value == true)
+                  {
+                    signupsuccess = true,
+                  }
+              });
+          return true;
         } else {
           SweetAlert.show(context,
               style: SweetAlertStyle.error,

@@ -54,7 +54,7 @@ class _PageListDataDeleteState extends State<PageListDataDelete> {
     _refreshController.loadComplete();
   }
 
-  Future<void> apiListdelete() async {
+  Future apiListdelete() async {
     var client = http.Client();
     try {
       var _obj = {
@@ -76,12 +76,37 @@ class _PageListDataDeleteState extends State<PageListDataDelete> {
     }
   }
 
-  Future<void> apiDeletedata(int id) async {
+  Future apiDeletedata(int id) async {
     print(id);
     var client = http.Client();
     try {
       var response =
           await client.post('$api/deleteDataStudent', body: {"id": "$id"});
+      if (response.statusCode == 200) {
+        var data = convert.jsonDecode(response.body);
+        if (data['status'] == true) {
+          SweetAlert.show(
+            context,
+            style: SweetAlertStyle.success,
+            title: "Success",
+          );
+          setState(() {
+            apiListdelete();
+          });
+        }
+        return data;
+      }
+    } finally {
+      client.close();
+    }
+  }
+
+  Future apiReuserData(int id) async {
+    print(id);
+    var client = http.Client();
+    try {
+      var response =
+          await client.post('$api/reusedatdelete', body: {"id": "$id"});
       if (response.statusCode == 200) {
         var data = convert.jsonDecode(response.body);
         if (data['status'] == true) {
@@ -169,23 +194,47 @@ class _PageListDataDeleteState extends State<PageListDataDelete> {
             trailing: Container(
               margin: EdgeInsets.only(right: 10.0),
               child: IconButton(
-                icon: Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                  size: 30.0,
-                ),
+                icon: Icon(Icons.more_vert, size: 35.0),
                 onPressed: () {
-                  SweetAlert.show(context,
-                      title: "คุณต้องการลบข้อมูล",
-                      subtitle:
-                          "${getstudents[index].prefixSTD} ${getstudents[index].firstNameSTD}   ${getstudents[index].lastNameSTD}   หรือไม่ ?",
-                      style: SweetAlertStyle.confirm,
-                      showCancelButton: true, onPress: (bool isConfirm) {
-                    if (isConfirm) {
-                      apiDeletedata(getstudents[index].studenID);
-                      return false;
-                    }
-                  });
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      child: Wrap(
+                        children: <Widget>[
+                          ListTile(
+                            leading: new Icon(Icons.loop),
+                            title: new Text('กู้ข้อมูลนักศึกษา'),
+                            onTap: () => {
+                              Navigator.of(context).pop(),
+                              apiReuserData(getstudents[index].studenID),
+                            },
+                          ),
+                          new ListTile(
+                            leading: new Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            title: new Text('ลบข้อมูล'),
+                            onTap: () => {
+                              Navigator.of(context).pop(),
+                              SweetAlert.show(context,
+                                  title: "คุณต้องการลบข้อมูล",
+                                  subtitle:
+                                      "${getstudents[index].prefixSTD} ${getstudents[index].firstNameSTD}   ${getstudents[index].lastNameSTD}   หรือไม่ ?",
+                                  style: SweetAlertStyle.confirm,
+                                  showCancelButton: true,
+                                  onPress: (bool isConfirm) {
+                                if (isConfirm) {
+                                  apiDeletedata(getstudents[index].studenID);
+                                  return false;
+                                }
+                              }),
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
             ),

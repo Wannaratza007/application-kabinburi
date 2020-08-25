@@ -28,7 +28,7 @@ class _PageProfileTeacherState extends State<PageProfileTeacher> {
     super.dispose();
   }
 
-  Future<void> findUser() async {
+  Future findUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (this.mounted) {
       setState(() {

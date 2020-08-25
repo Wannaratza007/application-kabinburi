@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:KABINBURI/models/community_model.dart';
+import 'package:KABINBURI/models/imagesSlider_model.dart';
 import 'package:KABINBURI/page_admin/screen_admin/wed_view/list_view_community.dart';
 import 'package:KABINBURI/page_admin/screen_admin/wed_view/list_view_messages.dart';
 import 'package:KABINBURI/page_admin/screen_admin/wed_view/wed_view.dart';
@@ -21,6 +22,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List<MessagesModel> _listMessages = List();
   List<CommunityModel> _listCommunitys = List();
+
   @override
   void initState() {
     apiListcommunitys();
@@ -29,11 +31,10 @@ class _DashboardState extends State<Dashboard> {
   }
 
   final List<String> imagesSlider = [
-    "https://4.bp.blogspot.com/-eV7KFWYOhgM/UMw4AOJb79I/AAAAAAAAACQ/4Dtc5yqY32Y/w1200-h630-p-k-no-nu/DSC06567.JPG",
-    "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/114218776_273508990603681_1479752560853370431_o.jpg?_nc_cat=111&_nc_sid=0be424&_nc_eui2=AeELqNeYLGPhOkqsacwgUERa0sFPARmOVwLSwU8BGY5XAq2IdYZ2R_iM8X6KcTp5rhHrSSLPrSmhv-_gVkcIzZlJ&_nc_ohc=709V2zLWxmgAX8PQXXS&_nc_ht=scontent.fbkk5-3.fna&oh=bc47e3c6beb7babb58bdea76e6903dd0&oe=5F417860",
-    "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116696662_276896856931561_9068128738272014893_o.jpg?_nc_cat=104&_nc_sid=0be424&_nc_eui2=AeE0DH8eDa8c1cBJNnwvBYXHgMhyQHtysGWAyHJAe3KwZcGr-zETeiKugqIWhyyOVKJvMLvvuSEn2tyr_tWqUiy0&_nc_ohc=1WAGz6pvuSUAX-cWNkF&_nc_ht=scontent.fbkk5-5.fna&oh=928a9a025feb54bfee914b11dda7192d&oe=5F482FAD",
-    "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116637131_276950443592869_1220570832513759601_o.jpg?_nc_cat=104&_nc_sid=e007fa&_nc_eui2=AeEz0YE8wAs7EZzdKVMqFG06Kn4ze2ktuQ8qfjN7aS25D6naBA-hKoxHpbyxvD2S0cg0M-VZ-_mNJjIJmzUZUsxh&_nc_ohc=Zr1MCiSyJpoAX9XEdTe&_nc_ht=scontent.fbkk5-5.fna&oh=d6fce7642f2b961a6c389124f03805e0&oe=5F469DF5",
-    // "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/114218776_273508990603681_1479752560853370431_o.jpg?_nc_cat=111&_nc_sid=0be424&_nc_eui2=AeELqNeYLGPhOkqsacwgUERa0sFPARmOVwLSwU8BGY5XAq2IdYZ2R_iM8X6KcTp5rhHrSSLPrSmhv-_gVkcIzZlJ&_nc_ohc=709V2zLWxmgAX8PQXXS&_nc_ht=scontent.fbkk5-3.fna&oh=bc47e3c6beb7babb58bdea76e6903dd0&oe=5F417860",
+    "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/116716203_281604803127433_6873937324063089041_o.jpg?_nc_cat=111&_nc_sid=e007fa&_nc_eui2=AeGhm0WJSkKy8DfYKeaf-GAsb_drZhyfmS5v92tmHJ-ZLq4UUg1c4EQz0jMDG2pHqgk84NAi1Q4VY4re8w2q8VKt&_nc_ohc=y4tWfKAbXZcAX_duUJJ&_nc_ht=scontent.fbkk5-3.fna&oh=969e3d3e7d8c29e40ab4c72dd53582d4&oe=5F4FCF21",
+    "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/114218776_273508990603681_1479752560853370431_o.jpg?_nc_cat=111&_nc_sid=0be424&_nc_eui2=AeELqNeYLGPhOkqsacwgUERa0sFPARmOVwLSwU8BGY5XAq2IdYZ2R_iM8X6KcTp5rhHrSSLPrSmhv-_gVkcIzZlJ&_nc_ohc=wBHSpEKcukQAX97xflV&_nc_ht=scontent.fbkk5-3.fna&oh=be9aba7a79d70c740b8906fee07c71f7&oe=5F514A60",
+    "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116696662_276896856931561_9068128738272014893_o.jpg?_nc_cat=104&_nc_sid=0be424&_nc_eui2=AeE0DH8eDa8c1cBJNnwvBYXHgMhyQHtysGWAyHJAe3KwZcGr-zETeiKugqIWhyyOVKJvMLvvuSEn2tyr_tWqUiy0&_nc_ohc=wG5pFM3CEOAAX-UOVGC&_nc_ht=scontent.fbkk5-5.fna&oh=72517f575f2cf19204f52b36bee8b3cb&oe=5F5018AD",
+    "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116637131_276950443592869_1220570832513759601_o.jpg?_nc_cat=104&_nc_sid=e007fa&_nc_eui2=AeEz0YE8wAs7EZzdKVMqFG06Kn4ze2ktuQ8qfjN7aS25D6naBA-hKoxHpbyxvD2S0cg0M-VZ-_mNJjIJmzUZUsxh&_nc_ohc=iWA4h5KfWNgAX_ctcVm&_nc_ht=scontent.fbkk5-5.fna&oh=4a68d058abfb72d98b46f83aff701cdf&oe=5F527B75",
   ];
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class _DashboardState extends State<Dashboard> {
       body: Container(
         child: ListView(
           children: <Widget>[
-            sliderImage(),
+            imagesSlider.length == 0 ? progress() : sliderImage(),
             textlist(context, 'ข่าวสาร', ListViewMessages()),
             _listMessages.length == 0 ? progress() : messagesSlider(),
             textlist(context, 'กิจกรรม', ListViewCommunity()),
@@ -71,8 +72,11 @@ class _DashboardState extends State<Dashboard> {
                 child: Container(
                   child: CachedNetworkImage(
                     progressIndicatorBuilder: (context, url, progress) =>
-                        CircularProgressIndicator(
-                      value: progress.progress,
+                        Container(
+                      padding: EdgeInsets.all(12.0),
+                      child: CircularProgressIndicator(
+                        value: progress.progress,
+                      ),
                     ),
                     imageUrl: _listMessages[index].urlImages,
                   ),
@@ -126,8 +130,11 @@ class _DashboardState extends State<Dashboard> {
                 children: <Widget>[
                   CachedNetworkImage(
                     progressIndicatorBuilder: (context, url, progress) =>
-                        CircularProgressIndicator(
-                      value: progress.progress,
+                        Container(
+                      padding: EdgeInsets.all(10.0),
+                      child: CircularProgressIndicator(
+                        value: progress.progress,
+                      ),
                     ),
                     imageUrl: _listCommunitys[index].urlimages,
                   ),
@@ -252,53 +259,43 @@ class _DashboardState extends State<Dashboard> {
     return Container(
       padding: EdgeInsets.only(top: 20.0),
       child: CarouselSlider.builder(
-        itemCount: imagesSlider.length,
+        itemCount: (imagesSlider).length,
         options: CarouselOptions(
           autoPlay: true,
           aspectRatio: 2.0,
           enlargeCenterPage: true,
         ),
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            child: Container(
-              // decoration: BoxDecoration(
-              //   color: mainColor,
-              //   borderRadius: BorderRadius.circular(12.0),
-              // ),
-              // child: CachedNetworkImage(
-              //   progressIndicatorBuilder: (context, url, progress) =>
-              //       CircularProgressIndicator(
-              //     value: progress.progress,
-              //   ),
-              //   imageUrl: '',
-              // ),
-
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(width: 3.0, color: Colors.grey),
-                image: DecorationImage(
-                  image: NetworkImage(imagesSlider[index]),
-                  fit: BoxFit.cover,
-                ),
-              ),
+        itemBuilder: (context, index) => Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(width: 3.0, color: Colors.grey),
+            image: DecorationImage(
+              image: NetworkImage(imagesSlider[index]),
+              fit: BoxFit.cover,
             ),
-            onTap: () {},
-          );
-        },
+          ),
+          // child: CachedNetworkImage(
+          //   progressIndicatorBuilder: (context, url, progress) =>
+          //       CircularProgressIndicator(
+          //     value: progress.progress,
+          //   ),
+          //   imageUrl: _listSlider[index].linkImages,
+          // ),
+        ),
       ),
     );
   }
 
-  Future<void> apiListmessages() async {
+  Future apiListmessages() async {
     var client = http.Client();
     try {
       var response = await client.post('$api/messages');
       if (response.statusCode == 200) {
         Map<String, dynamic> map = json.decode(response.body);
         List<dynamic> data = map["result"];
-        for (var mapdata in data) {
+        for (var i in data) {
           setState(() {
-            MessagesModel _listMessage = MessagesModel.fromJson(mapdata);
+            MessagesModel _listMessage = MessagesModel.fromJson(i);
             _listMessages.add(_listMessage);
           });
         }
@@ -309,16 +306,16 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  Future<void> apiListcommunitys() async {
+  Future apiListcommunitys() async {
     var client = http.Client();
     try {
       var response = await client.post('$api/community');
       if (response.statusCode == 200) {
         Map<String, dynamic> map = json.decode(response.body);
         dynamic data = map["result"];
-        for (var mapdata in data) {
+        for (var i in data) {
           setState(() {
-            CommunityModel _listCommunity = CommunityModel.fromJson(mapdata);
+            CommunityModel _listCommunity = CommunityModel.fromJson(i);
             _listCommunitys.add(_listCommunity);
           });
         }
@@ -328,4 +325,24 @@ class _DashboardState extends State<Dashboard> {
       client.close();
     }
   }
+
+  // Future apiListimagesSlider() async {
+  //   var client = http.Client();
+  //   try {
+  //     var response = await client.post('$api/showimage');
+  //     if (response.statusCode == 200) {
+  //       Map<String, dynamic> map = json.decode(response.body);
+  //       List<dynamic> data = map["result"];
+  //       for (var i in data) {
+  //         setState(() {
+  //           ImagesSlider _list = ImagesSlider.fromJson(i);
+  //           _listSlider.add(_list);
+  //         });
+  //       }
+  //       return data;
+  //     } else {}
+  //   } finally {
+  //     client.close();
+  //   }
+  // }
 }

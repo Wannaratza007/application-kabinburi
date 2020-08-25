@@ -21,7 +21,7 @@ class _PageProfileUserState extends State<PageProfileUser> {
     findUser();
   }
 
-  Future<void> findUser() async {
+  Future findUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       firstnameuser = preferences.getString('firstname');

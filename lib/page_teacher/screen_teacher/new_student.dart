@@ -69,11 +69,13 @@ class _AddDataStudentState extends State<AddDataStudent> {
                     inputData(
                         Icon(Icons.account_circle, color: indexColor),
                         'ชื่อจริง นักศึกษา',
+                        'ชื่อจริง นักศึกษา',
                         firstnameSTD,
                         TextInputType.text,
                         'กรุณากรอกชื่อจริง'),
                     inputData(
                         Icon(Icons.account_circle, color: indexColor),
+                        'นามสกุล นักศึกษา',
                         'นามสกุล นักศึกษา',
                         lastnameSTD,
                         TextInputType.text,
@@ -81,11 +83,13 @@ class _AddDataStudentState extends State<AddDataStudent> {
                     inputData(
                         Icon(Icons.phone_iphone, color: indexColor),
                         'เบอร์โทรศัพท์ นักศึกษา',
+                        'เบอร์โทรศัพท์ นักศึกษา',
                         phoneSTD,
                         TextInputType.phone,
                         'กรุณากรอก เบอร์โทรศัพท์'),
                     inputData(
                         Icon(Icons.phone_iphone, color: indexColor),
+                        'รหัสประจำตัวประชาชน',
                         'รหัสประจำตัวประชาชน',
                         cardNumberSTD,
                         TextInputType.number,
@@ -96,17 +100,20 @@ class _AddDataStudentState extends State<AddDataStudent> {
                     inputData(
                         Icon(Icons.account_circle, color: indexColor),
                         'ชื่อจริง ผู้ปกครอง',
+                        'ชื่อจริง ผู้ปกครอง',
                         firstnameGD,
                         TextInputType.text,
                         'กรุณากรอกชื่อจริง'),
                     inputData(
                         Icon(Icons.account_circle, color: indexColor),
                         'นามสกุล ผู้ปกครอง',
+                        'นามสกุล ผู้ปกครอง',
                         lastnameGD,
                         TextInputType.text,
                         'กรุณากรอก นามสกุล'),
                     inputData(
                         Icon(Icons.account_circle, color: indexColor),
+                        'เบอร์โทรศัพ ผู้ปกครอง',
                         'เบอร์โทรศัพ ผู้ปกครอง',
                         phoneGD,
                         TextInputType.phone,
@@ -130,7 +137,7 @@ class _AddDataStudentState extends State<AddDataStudent> {
     );
   }
 
-  Future<void> apiAddstudent(
+  Future apiAddstudent(
     grades,
     prefixSTD,
     firstnameSTD,
@@ -292,17 +299,18 @@ class _AddDataStudentState extends State<AddDataStudent> {
     );
   }
 
-  Widget inputData(Icon icon, String hint, TextEditingController controller,
-      TextInputType type, String isEmpty) {
+  Widget inputData(Icon icon, String hint, String label,
+      TextEditingController controller, TextInputType type, String isEmpty) {
     return Container(
       margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0),
       child: TextFormField(
-        style: TextStyle(fontSize: 16.0),
+        // style: TextStyle(fontSize: 16.0),
         controller: controller,
         // obscureText: obscure,
         keyboardType: type,
         decoration: InputDecoration(
           hintText: hint,
+          // labelText: label,
           prefixIcon: icon,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0)),

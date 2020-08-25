@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-var primaryColor = Colors.blue[700];
-var indexColor = Colors.lightBlue[600];
-var currentIndexColor = Colors.red[600];
-var mainColor = Colors.grey[300];
+Color primaryColor = Colors.blue[700];
+Color indexColor = Colors.lightBlue[600];
+Color mainColor = Colors.grey[300];
 
 Widget textAppBar() {
   return Center(
@@ -37,7 +36,7 @@ Widget progress() {
 }
 
 var testlist = TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500);
-var testlistsub = TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400);
+var testlistsub = TextStyle(fontSize: 15.0, fontWeight: FontWeight.w400);
 
 final kHintTextStyle = TextStyle(
   color: Colors.white54,

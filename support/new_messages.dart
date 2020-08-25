@@ -1,13 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:KABINBURI/style/connect_api.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:sweetalert/sweetalert.dart';
+import 'package:http/http.dart' as http;
 
 class AddNewMessages extends StatefulWidget {
   AddNewMessages({Key key}) : super(key: key);
@@ -17,13 +17,15 @@ class AddNewMessages extends StatefulWidget {
 }
 
 class _AddNewMessagesState extends State<AddNewMessages> {
+  List<Asset> images = List<Asset>();
   File _image;
-  var status;
-  Future getImagegallery() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    print("mage.path :" + image.path);
+
+  Future getImage() async {
+    final pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+
     setState(() {
-      _image = image;
+      _image = File(pickedFile.path);
     });
   }
 
@@ -45,6 +47,7 @@ class _AddNewMessagesState extends State<AddNewMessages> {
         ),
       ),
       body: Container(
+        height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(10.0),
         child: ListView(
           children: <Widget>[
@@ -54,9 +57,11 @@ class _AddNewMessagesState extends State<AddNewMessages> {
                 children: <Widget>[
                   Container(
                     child: Container(
-                      height: 500.0,
+                      // height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      height: 380.0,
                       margin: EdgeInsets.all(10.0),
-                      child: _image == null
+                      child: (images).length == 0
                           ? GestureDetector(
                               child: Container(
                                 color: mainColor,
@@ -68,10 +73,10 @@ class _AddNewMessagesState extends State<AddNewMessages> {
                                 ),
                               ),
                               onTap: () {
-                                getImagegallery();
+                                loadAssets();
                               },
                             )
-                          : Image.file(_image),
+                          : showImages(),
                     ),
                   ),
                   buttonSVAE(),
@@ -85,39 +90,57 @@ class _AddNewMessagesState extends State<AddNewMessages> {
   }
 
   Future _uploadimages() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     var client = http.Client();
     try {
-      if (_image == null) return;
-      String base64Image = base64Encode(_image.readAsBytesSync());
-      String fileName = _image.path.split("/").last;
-      var _obj = {
-        "status": preferences.getString("status"),
-        "image": base64Image,
-        "name": fileName,
-      };
+      var _obj = {"data": "555"};
       print(_obj);
       var response = await client.post('$api/addmessages', body: _obj);
       var data = jsonDecode(response.body);
+      print(data);
+      print(data["status"]);
       var status = data["status"];
       if (status == true) {
-        new Future.delayed(new Duration(seconds: 2), () {
-          SweetAlert.show(context,
-              subtitle: "Svae Image Successfully",
-              style: SweetAlertStyle.success);
-        });
-      } else {
-        SweetAlert.show(
-          context,
-          subtitle: "เกิดข้อผิดพลาดกรูณาลองอีกครั้งค่ะ....",
-          style: SweetAlertStyle.confirm,
-          showCancelButton: false,
-        );
+        SweetAlert.show(context,
+            title: " ",
+            subtitle: "Svae Image Successfully",
+            style: SweetAlertStyle.success);
       }
-      return true;
+      return data;
     } finally {
       client.close();
     }
+  }
+
+  Widget showImages() {
+    return ListView.builder(
+      itemCount: (images).length,
+      itemBuilder: (context, index) => Container(
+        margin: EdgeInsets.all(10.0),
+        child: AssetThumb(
+          asset: images[index],
+          width: 300,
+          height: 300,
+        ),
+      ),
+    );
+  }
+
+  Future loadAssets() async {
+    List<Asset> resultList = List<Asset>();
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 1,
+        enableCamera: false,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+      );
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+    if (!mounted) return;
+    setState(() {
+      images = resultList;
+    });
   }
 
   Widget buttonSVAE() {
@@ -137,14 +160,13 @@ class _AddNewMessagesState extends State<AddNewMessages> {
         textColor: Colors.white,
         color: Colors.blue,
         onPressed: () {
-          if (_image != null) {
-            _uploadimages().then((res) => {
-                  if (res == true) {Navigator.of(context).pop()}
-                });
+          if ((images).length > 0) {
+            _uploadimages();
+            Navigator.of(context).pop();
           } else {
             SweetAlert.show(
               context,
-              subtitle: "กรุณาเลือกรูปภาพ",
+              subtitle: "กรุณาเลือกรูปภาพค่ะ...",
               style: SweetAlertStyle.confirm,
               showCancelButton: false,
             );

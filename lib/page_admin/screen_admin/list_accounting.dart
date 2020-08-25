@@ -54,7 +54,7 @@ class _AccountingState extends State<Accounting> {
     _refreshController.loadComplete();
   }
 
-  Future<void> apiGetDataUser() async {
+  Future apiGetDataUser() async {
     var client = http.Client();
     try {
       var _obj = {
@@ -76,7 +76,7 @@ class _AccountingState extends State<Accounting> {
     }
   }
 
-  Future<void> apiDeleteuser(int id) async {
+  Future apiDeleteuser(int id) async {
     print(id);
     var client = http.Client();
     try {

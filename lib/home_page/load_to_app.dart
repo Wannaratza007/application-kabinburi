@@ -19,11 +19,10 @@ class _LoadToAppPageState extends State<LoadToAppPage> {
     super.initState();
     Future.delayed(new Duration(seconds: 4), () {
       checkpreferences();
-      // routepage(LoginPage());
     });
   }
 
-  Future<void> checkpreferences() async {
+  Future checkpreferences() async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String status = preferences.getString('status');
@@ -42,7 +41,9 @@ class _LoadToAppPageState extends State<LoadToAppPage> {
       } else {
         routepage(LoginPage());
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   void routepage(pages) {

@@ -78,7 +78,7 @@ class _AddAccountState extends State<AddAccount> {
     );
   }
 
-  Future<void> apiAdduser(
+  Future apiAdduser(
       firstname, lastname, username, password, phone, deparment) async {
     var client = http.Client();
     var _obj = {
@@ -113,7 +113,7 @@ class _AddAccountState extends State<AddAccount> {
     }
   }
 
-  Future<void> apiCkeckAccount(
+  Future apiCkeckAccount(
       firstname, lastname, username, password, phone, deparment) async {
     var client = http.Client();
     try {

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:KABINBURI/page_teacher/screen_teacher/view_Visit.dart';
+import 'package:KABINBURI/page_teacher/screen_teacher/visit_home/view_Visit.dart';
 import 'package:KABINBURI/page_teacher/screen_teacher/visit_home/visit_home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -28,6 +28,7 @@ class _DataStudentState extends State<DataStudent> {
   String deparmentuser;
   Timer timer;
   var top = 10;
+
   @override
   void initState() {
     isloading = true;
@@ -115,7 +116,6 @@ class _DataStudentState extends State<DataStudent> {
           title: TextField(
             onChanged: (value) {
               timer = new Timer(const Duration(milliseconds: 200), () {
-                print('TIME');
                 apiListdataStudent();
               });
             },
@@ -194,8 +194,7 @@ class _DataStudentState extends State<DataStudent> {
                           child: Wrap(
                             children: <Widget>[
                               ListTile(
-                                leading:
-                                    new Icon(Icons.assignment_turned_in),
+                                leading: new Icon(Icons.assignment_turned_in),
                                 title: new Text('เยี่ยมบ้าน'),
                                 onTap: () => {
                                   Navigator.of(context).pop(),
@@ -257,7 +256,7 @@ class _DataStudentState extends State<DataStudent> {
           );
   }
 
-  Future<void> apiListdataStudent() async {
+  Future apiListdataStudent() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       isloading = true;
@@ -286,7 +285,7 @@ class _DataStudentState extends State<DataStudent> {
     }
   }
 
-  Future<void> apiDeleteStudent(int id) async {
+  Future apiDeleteStudent(int id) async {
     var client = http.Client();
     try {
       var response =
