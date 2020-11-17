@@ -1,91 +1,87 @@
 import 'dart:convert';
-import 'package:KABINBURI/models/user_model.dart';
-import 'package:KABINBURI/page_admin/main_admin.dart';
-import 'package:KABINBURI/page_teacher/main_teacher.dart';
-import 'package:KABINBURI/page_user/main_user.dart';
-import 'package:KABINBURI/home_page/register.dart';
-import 'package:http/http.dart' as http;
+import 'package:KABINBURI/Administrator/main_Admin.dart';
+import 'package:KABINBURI/Teacher/main_Teacher.dart';
+import 'package:KABINBURI/model/user_model.dart';
+import 'package:KABINBURI/sign_up.dart';
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
+import 'package:KABINBURI/style/singout.dart';
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sweetalert/sweetalert.dart';
 
-class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+class SignInPage extends StatefulWidget {
+  SignInPage({Key key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignInPageState createState() => _SignInPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final username = TextEditingController();
   final password = TextEditingController();
+  bool islogin = false;
 
   Future checkLogin() async {
+    print('xxxxxxxxxxxxxxxxxxxxxxxxx');
     var client = http.Client();
-    print('username' + username.text.trim());
-    print('password' + password.text.trim());
+    print('username : ' + '  ' + username.text.trim());
+    print('password : ' + '  ' + password.text.trim());
     var user = username.text.trim();
     var pass = password.text.trim();
     try {
       var _obj = {'username': user, 'password': pass};
-      var response = await client.post('$api/login', body: _obj);
-      if (response.statusCode == 200) {
-        Map<String, dynamic> datas = json.decode(response.body);
-        List<dynamic> data = datas["result"];
-        if (datas['status'] == true) {
-          for (final map in data) {
-            UserModel usermodel = new UserModel.fromJson(map);
-            var status = usermodel.status;
-            print('status' + status);
-            if (pass == usermodel.password) {
-              if (status == 'admin') {
-                routeToPage(MainAdminPage(), usermodel);
-              } else if (status == 'teacher') {
-                routeToPage(MainTeacherPass(), usermodel);
-              } else if (status == 'user') {
-                routeToPage(MainUsersPage(), usermodel);
-              } else {
-                SweetAlert.show(
-                  context,
-                  style: SweetAlertStyle.error,
-                  subtitle: "error 404",
-                );
-              }
-            } else {  
-              SweetAlert.show(
-                context,
-                style: SweetAlertStyle.error,
-                subtitle: "ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง",
-              );
-            }
+      var response = await client.post('$api/server/user/login', body: _obj);
+      var result = json.decode(response.body);
+      if (result['status'] == true) {
+        for (var i in result["result"]) {
+          User usermodel = new User.fromJson(i);
+          var status = usermodel.status;
+          var pfn = await SharedPreferences.getInstance();
+          pfn.setInt('id', usermodel.userId);
+          pfn.setString('firstname', usermodel.firstname);
+          pfn.setString('lastname', usermodel.lastname);
+          pfn.setString('status', usermodel.status);
+          pfn.setInt('deparmentID', usermodel.deparment);
+          pfn.setString('deparment', usermodel.deparmentName);
+          if (status == 'admin') {
+            print('Administrator');
+            pushRemove(context, MainAdminPage());
+            setState(() {
+              islogin = false;
+              username.text = password.text = '';
+            });
+          } else if (status == 'teacher') {
+            setState(() {
+              islogin = false;
+              username.text = password.text = '';
+            });
+            pushRemove(context, MainTeacherPage());
+            print('Teacher');
+          } else {
+            EdgeAlert.show(context,
+                title: 'ERROR',
+                description: 'error 404!',
+                gravity: EdgeAlert.TOP,
+                backgroundColor: Colors.red);
           }
-        } else {
-          SweetAlert.show(
-            context,
-            style: SweetAlertStyle.error,
-            subtitle: "ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง",
-          );
         }
-        return data;
-      } else {}
+      } else {
+        EdgeAlert.show(context,
+            title: 'ERROR',
+            description: 'ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง',
+            gravity: EdgeAlert.TOP,
+            backgroundColor: Colors.red);
+        setState(() {
+          islogin = false;
+        });
+      }
     } finally {
       client.close();
     }
-  }
-
-  Future routeToPage(Widget page, UserModel userModel) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setInt('id', userModel.userID);
-    preferences.setString('firstname', userModel.firstname);
-    preferences.setString('lastname', userModel.lastname);
-    preferences.setString('status', userModel.status);
-    preferences.setString('deparment', userModel.deparment);
-    MaterialPageRoute pageroute = MaterialPageRoute(builder: (context) => page);
-    Navigator.pushAndRemoveUntil(context, pageroute, (route) => false);
   }
 
   @override
@@ -264,9 +260,19 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         onPressed: () {
-          // if (_formKey.currentState.validate()) {
-            checkLogin();
-          // }
+          print("islogin");
+          print(islogin);
+          islogin == true
+              ? EdgeAlert.show(context,
+                  title: 'กรุณารอสักครู่ค่ะ...',
+                  gravity: EdgeAlert.TOP,
+                  backgroundColor: Colors.blue,
+                  icon: Icons.check_circle_outline)
+              : checkLogin();
+          hidekeyboard();
+          setState(() {
+            islogin = true;
+          });
         },
       ),
     );
@@ -282,10 +288,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildSignupBtn() {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => RegisterPage()),
-      ),
+      onTap: () {
+        hidekeyboard();
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SignUpPage()));
+      },
       child: RichText(
         text: TextSpan(
           children: [

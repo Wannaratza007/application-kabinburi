@@ -1,19 +1,21 @@
-import 'package:KABINBURI/page_teacher/main_teacher.dart';
+import 'dart:convert';
+import 'package:KABINBURI/Teacher/main_Teacher.dart';
+import 'package:edge_alert/edge_alert.dart';
+import 'package:http/http.dart' as http;
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'dart:convert' as convert;
-import 'package:sweetalert/sweetalert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AddDataStudent extends StatefulWidget {
-  AddDataStudent({Key key}) : super(key: key);
+class AddNewStudent extends StatefulWidget {
+  AddNewStudent({Key key}) : super(key: key);
 
   @override
-  _AddDataStudentState createState() => _AddDataStudentState();
+  _AddNewStudentState createState() => _AddNewStudentState();
 }
 
-class _AddDataStudentState extends State<AddDataStudent> {
+class _AddNewStudentState extends State<AddNewStudent> {
+  var firstnameuser, lastnameuser, deparmentID, deparmentName;
   var idSTD = TextEditingController();
   var firstnameSTD = TextEditingController();
   var lastnameSTD = TextEditingController();
@@ -26,29 +28,94 @@ class _AddDataStudentState extends State<AddDataStudent> {
   var villages = TextEditingController();
   var road = TextEditingController();
   var postcodes = TextEditingController();
+  var userdeparment = TextEditingController();
+  bool issaved = true;
 
   var currentSelectedprefixSTD;
   var currentSelectedprefixGD;
-  var currentSelecteddeparment;
   var currentSelectedgrade1;
   var currentSelectedgrade2;
   var currentSelectedgrade3;
 
-  final _deparment = [
-    "การบัญชี",
-    "คอมพิวเตอร์ธุรกิจ",
-    "ช่างซ่อมบำรุง",
-    "ช่างยนต์",
-    "ธุรกิจค้าปลีก",
-    "ช่างไฟฟ้ากำลัง",
-    "ช่างอิเล็กทรอนิกส์",
-  ];
   final _grade1 = ["ปวช.", "ปวส."];
   final _grade2 = ["1", "2", "3"];
   final _grade3 = ["1", "2", "3", "4", "5", "6"];
   final _prefixSTD = ["ด.ช.", "ด.ญ.", "นาย", "นาง", "นางสาว"];
   final _prefixGD = ["นาย", "นาง", "นางสาว"];
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    finduser();
+  }
+
+  Future finduser() async {
+    var pfs = await SharedPreferences.getInstance();
+    setState(() {
+      firstnameuser = pfs.getString('firstname');
+      lastnameuser = pfs.getString('lastname');
+      deparmentID = pfs.getInt('deparmentID');
+      deparmentName = pfs.getString('deparment');
+      userdeparment.text = 'แผนกวิชา  ' + deparmentName;
+    });
+  }
+
+  Future apiAddstudent() async {
+    var grades = currentSelectedgrade1 +
+        currentSelectedgrade2 +
+        '/' +
+        currentSelectedgrade3;
+    var client = http.Client();
+    var _obj = {
+      "deparmentID": (deparmentID).toString(),
+      "codeSTD": idSTD.text.trim(),
+      "prefixSTD": currentSelectedprefixSTD,
+      "firstNameSTD": firstnameSTD.text.trim(),
+      "lastNameSTD": lastnameSTD.text.trim(),
+      "phonesSTD": phoneSTD.text.trim(),
+      "cardNumber": cardNumberSTD.text.trim(),
+      "studygroup": grades,
+      "prefixGD": currentSelectedprefixGD,
+      "firstNameGD": firstnameGD.text.trim(),
+      "lastNameGD": lastnameGD.text.trim(),
+      "phonesGD": phoneGD.text.trim(),
+      "numberHomes": numbersHome.text.trim(),
+      "village": villages.text.trim(),
+      "road": road.text.trim(),
+      "post": postcodes.text.trim(),
+    };
+    try {
+      var res =
+          await client.post('$api/server/student/add-studentId', body: _obj);
+      var data = json.decode(res.body);
+      if (data["status"] == true) {
+        EdgeAlert.show(context,
+            title: 'บันทึกข้อมูลสำเร็จ',
+            gravity: EdgeAlert.TOP,
+            backgroundColor: Colors.green,
+            icon: Icons.check_circle_outline);
+        setState(() {
+          issaved = true;
+        });
+        Future.delayed(new Duration(milliseconds: 800), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MainTeacherPage()),
+          );
+        });
+      } else {
+        EdgeAlert.show(context,
+            title: 'เกิดข้อผิดพลาด',
+            description: 'กรุณาลองใหม่อีกครั้งค่ะ...',
+            gravity: EdgeAlert.TOP,
+            backgroundColor: Colors.red,
+            icon: Icons.check_circle_outline);
+      }
+    } finally {
+      client.close();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +128,7 @@ class _AddDataStudentState extends State<AddDataStudent> {
             Card(
               elevation: 7.0,
               child: Form(
-                key: _formKey,
+                // key: _formKey,
                 child: Column(
                   children: <Widget>[
                     textTitle('ข้อมูลนักศึกษา'),
@@ -102,7 +169,7 @@ class _AddDataStudentState extends State<AddDataStudent> {
                         cardNumberSTD,
                         TextInputType.number,
                         'กรุณากรอก รหัสประจำตัวประชาชน'),
-                    daparment(),
+                    deparmentuser(),
                     textTitle('ข้อมูลผู้ปกครอง'),
                     prefixGD(),
                     inputData(
@@ -145,62 +212,6 @@ class _AddDataStudentState extends State<AddDataStudent> {
     );
   }
 
-  Future apiAddstudent(
-    grades,
-    prefixSTD,
-    firstnameSTD,
-    lastnameSTD,
-    phoneSTD,
-    cardNumberSTD,
-    deparment,
-    prefixGD,
-    firstnameGD,
-    lastnameGD,
-    phoneGD,
-    numberH,
-    village,
-    road,
-    postcodes,
-  ) async {
-    var client = http.Client();
-    var _obj = {
-      'prefixSTD': prefixSTD,
-      'firstNameSTD': firstnameSTD,
-      'lastNameSTD': lastnameSTD,
-      'phonesSTD': phoneSTD,
-      'cardNumber': cardNumberSTD,
-      'deparment': deparment,
-      'studygroup': grades,
-      'prefixGD': prefixGD,
-      'firstNameGD': firstnameGD,
-      'lastNameGD': lastnameGD,
-      'phonesGD': phoneGD,
-      'numberHomes': numberH,
-      'village': village,
-      'road': road,
-      'post': postcodes
-    };
-    print(_obj);
-    try {
-      var response = await client.post('$api/insertStudent', body: _obj);
-      if (response.statusCode == 200) {
-        var data = convert.jsonDecode(response.body);
-        if (data["status"] == true) {
-          SweetAlert.show(context,
-              subtitle: "บันทึกข้อมูลสำเร็จ", style: SweetAlertStyle.success);
-          Future.delayed(new Duration(milliseconds: 800), () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MainTeacherPass()),
-            );
-          });
-        }
-      }
-    } finally {
-      client.close();
-    }
-  }
-
   Widget buttonSave() {
     return Container(
       height: 55.0,
@@ -216,30 +227,18 @@ class _AddDataStudentState extends State<AddDataStudent> {
               fontSize: 22.0, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
-          if (_formKey.currentState.validate()) {
-            var grades = currentSelectedgrade1 +
-                currentSelectedgrade2 +
-                '/' +
-                currentSelectedgrade3;
-            print(grades);
-            apiAddstudent(
-              grades,
-              currentSelectedprefixSTD,
-              firstnameSTD.text.toString(),
-              lastnameSTD.text.toString(),
-              phoneSTD.text.toString(),
-              cardNumberSTD.text.toString(),
-              currentSelecteddeparment,
-              currentSelectedprefixGD,
-              firstnameGD.text.toString(),
-              lastnameGD.text.toString(),
-              phoneGD.text.toString(),
-              numbersHome.text.toString(),
-              villages.text.toString(),
-              road.text.toString(),
-              postcodes.text.toString(),
-            );
-          }
+          issaved == false
+              ? EdgeAlert.show(context,
+                  title: 'กำลังบันทึกข้อมูล',
+                  description: 'กรุณารอสักครู่ค่ะ...',
+                  gravity: EdgeAlert.TOP,
+                  backgroundColor: Colors.blue,
+                  icon: Icons.check_circle_outline)
+              : apiAddstudent();
+          hidekeyboard();
+          setState(() {
+            issaved = false;
+          });
         },
       ),
     );
@@ -456,6 +455,38 @@ class _AddDataStudentState extends State<AddDataStudent> {
     );
   }
 
+  Widget deparmentuser() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: indexColor, width: 2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0),
+      height: 60.0,
+      child: TextFormField(
+        controller: userdeparment,
+        enabled: false,
+        decoration: InputDecoration(
+          // enabledBorder: OutlineInputBorder(
+          //     borderSide: BorderSide(color: indexColor),
+          //     borderRadius: BorderRadius.circular(100)),
+          // focusedBorder: OutlineInputBorder(
+          //     borderSide: BorderSide(color: Colors.white),
+          //     borderRadius: BorderRadius.circular(100)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+            borderSide: BorderSide(color: indexColor, width: 2),
+          ),
+          // enabledBorder: OutlineInputBorder(
+          //   borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          //   borderSide: BorderSide(color: indexColor, width: 2),
+          // ),
+          // labelText: 'แผนกวิชา',
+        ),
+      ),
+    );
+  }
+
   Widget testDropdown(String text) {
     return Container(
       margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0),
@@ -503,44 +534,6 @@ class _AddDataStudentState extends State<AddDataStudent> {
                   );
                 }).toList(),
               ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget daparment() {
-    return Container(
-      margin: EdgeInsets.only(top: 15.0, bottom: 15.0),
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
-      child: FormField<String>(
-        builder: (FormFieldState<String> state) {
-          return InputDecorator(
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                borderSide: BorderSide(color: indexColor, width: 2),
-              ),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                  icon: Icon(Icons.arrow_drop_down, color: indexColor),
-                  hint: Text("กรุณาเลือกแผนก"),
-                  value: currentSelecteddeparment,
-                  isDense: true,
-                  onChanged: (newValue) {
-                    setState(() {
-                      currentSelecteddeparment = newValue;
-                    });
-                    print(currentSelecteddeparment);
-                  },
-                  items: _deparment.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList()),
             ),
           );
         },

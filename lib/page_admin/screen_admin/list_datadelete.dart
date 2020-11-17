@@ -161,9 +161,9 @@ class _PageListDataDeleteState extends State<PageListDataDelete> {
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 onLoading: _onLoading,
-                child: isLoading == true
-                    ? progress()
-                    : (getstudents.length == 0 ? notedata() : showItem()),
+                child: isLoading == true ? progress() : showItem(),
+                // ? progress()
+                // : (getstudents.length == 0 ? notedata() : showItem()),
               ),
             ),
           ),

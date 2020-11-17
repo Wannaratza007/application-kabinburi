@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Color primaryColor = Colors.blue[700];
 Color indexColor = Colors.lightBlue[600];
 Color mainColor = Colors.grey[300];
+
+// ignore: missing_return
+Future hidekeyboard() {
+  SystemChannels.textInput.invokeMethod('TextInput.hide');
+}
 
 Widget textAppBar() {
   return Center(
@@ -34,6 +40,10 @@ Widget progress() {
     ),
   );
 }
+
+var textlist = TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500);
+var textlistsub = TextStyle(fontSize: 15.0, fontWeight: FontWeight.w400);
+
 
 var testlist = TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500);
 var testlistsub = TextStyle(fontSize: 15.0, fontWeight: FontWeight.w400);

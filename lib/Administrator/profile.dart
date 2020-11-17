@@ -1,21 +1,17 @@
-import 'package:KABINBURI/page_admin/main_admin.dart';
-import 'package:KABINBURI/page_admin/screen_admin/list_accounting.dart';
-import 'package:KABINBURI/page_admin/screen_admin/new_community.dart';
-import 'package:KABINBURI/page_admin/screen_admin/new_messages.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:KABINBURI/style/singout.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
-class PageProfileAdmin extends StatefulWidget {
-  PageProfileAdmin({Key key}) : super(key: key);
+class ProflieAdmin extends StatefulWidget {
+  ProflieAdmin({Key key}) : super(key: key);
 
   @override
-  _PageProfileAdminState createState() => _PageProfileAdminState();
+  _ProflieAdminState createState() => _ProflieAdminState();
 }
 
-class _PageProfileAdminState extends State<PageProfileAdmin> {
+class _ProflieAdminState extends State<ProflieAdmin> {
   String firstnameuser, lastnameuser;
 
   @override
@@ -27,10 +23,10 @@ class _PageProfileAdminState extends State<PageProfileAdmin> {
   }
 
   Future finduser() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var pfs = await SharedPreferences.getInstance();
     setState(() {
-      firstnameuser = preferences.getString('firstname');
-      lastnameuser = preferences.getString('lastname');
+      firstnameuser = pfs.getString('firstname');
+      lastnameuser = pfs.getString('lastname');
     });
   }
 
@@ -76,34 +72,34 @@ class _PageProfileAdminState extends State<PageProfileAdmin> {
               trailing: Icon(Icons.arrow_forward_ios),
               title: Text('จัดการบัญชี', style: TextStyle(fontSize: 18.0)),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Accounting()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => Accounting()),
+                // );
               },
             ),
-            ListTile(
-              leading: Icon(Icons.apps),
-              trailing: Icon(Icons.arrow_forward_ios),
-              title: Text('เพิ่มข่าวสาร', style: TextStyle(fontSize: 18.0)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddNewMessages()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.apps),
-              trailing: Icon(Icons.arrow_forward_ios),
-              title: Text('เพิ่มกิจกรรม', style: TextStyle(fontSize: 18.0)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddNewCommunoty()),
-                );
-              },
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.apps),
+            //   trailing: Icon(Icons.arrow_forward_ios),
+            //   title: Text('เพิ่มข่าวสาร', style: TextStyle(fontSize: 18.0)),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => AddNewMessages()),
+            //     );
+            //   },
+            // ),
+            // ListTile(
+            //   leading: Icon(Icons.apps),
+            //   trailing: Icon(Icons.arrow_forward_ios),
+            //   title: Text('เพิ่มกิจกรรม', style: TextStyle(fontSize: 18.0)),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => AddNewCommunoty()),
+            //     );
+            //   },
+            // ),
             ListTile(
               leading: Icon(Icons.exit_to_app, color: Colors.red),
               title: Text(

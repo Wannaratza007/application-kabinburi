@@ -1,37 +1,37 @@
-import 'package:KABINBURI/page_admin/screen_admin/dashboard.dart';
-import 'package:KABINBURI/page_teacher/dashboard_teacher.dart';
-import 'package:KABINBURI/page_teacher/screen_teacher/list_student.dart';
-import 'package:KABINBURI/page_teacher/screen_teacher/new_student.dart';
-import 'package:KABINBURI/page_teacher/screen_teacher/profile_teacher.dart';
+import 'package:KABINBURI/Teacher/add_student.dart';
+import 'package:KABINBURI/Teacher/dashboard_teacher.dart';
+import 'package:KABINBURI/Teacher/list_student.dart';
+import 'package:KABINBURI/Teacher/profile_teacher.dart';
+import 'package:KABINBURI/page_teacher/screen_teacher/visit_home/visit_home.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:flutter/material.dart';
 
-class MainTeacherPass extends StatefulWidget {
-  MainTeacherPass({Key key}) : super(key: key);
+class MainTeacherPage extends StatefulWidget {
+  MainTeacherPage({Key key}) : super(key: key);
 
   @override
-  _MainTeacherPassState createState() => _MainTeacherPassState();
+  _MainTeacherPageState createState() => _MainTeacherPageState();
 }
 
-class _MainTeacherPassState extends State<MainTeacherPass> {
+class _MainTeacherPageState extends State<MainTeacherPage> {
   int _pageIndex = 0;
 
   Widget pageIndex(int currentIndex) {
     switch (currentIndex) {
       case 0:
-        return DashboardTeacher();
+        return DashboardT();
         break;
       case 1:
-        return AddDataStudent();
+        return AddNewStudent();
         break;
       case 2:
-        return DataStudent();
+        return ListdataStudents();
         break;
       case 3:
-        return PageProfileTeacher();
+        return ProfileTeacher();
         break;
       default:
-        return DashboardTeacher();
+        return DashboardT();
     }
   }
 

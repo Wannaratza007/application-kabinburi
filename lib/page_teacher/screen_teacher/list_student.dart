@@ -37,7 +37,6 @@ class _DataStudentState extends State<DataStudent> {
   }
 
   void _onRefresh() async {
-    // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1500));
     setState(() {
       top = 10;

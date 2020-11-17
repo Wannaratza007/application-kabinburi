@@ -1,6 +1,5 @@
-import 'package:KABINBURI/home_page/load_to_app.dart';
+import 'package:KABINBURI/load_app.dart';
 import 'package:KABINBURI/style/contsan.dart';
-import 'package:KABINBURI/test_login_friesbase.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -14,8 +13,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primaryColor: primaryColor, cursorColor: indexColor),
       title: 'KABINBURI',
-      home: LoadToAppPage(),
-      // home: TestLogin(),
+      home: LoadAppPage(),
     );
   }
 }

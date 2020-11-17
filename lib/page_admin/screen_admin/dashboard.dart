@@ -25,16 +25,15 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
-    apiListcommunitys();
-    apiListmessages();
+    // apiListcommunitys();
     super.initState();
   }
 
   final List<String> imagesSlider = [
-    "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/116716203_281604803127433_6873937324063089041_o.jpg?_nc_cat=111&_nc_sid=e007fa&_nc_eui2=AeGhm0WJSkKy8DfYKeaf-GAsb_drZhyfmS5v92tmHJ-ZLq4UUg1c4EQz0jMDG2pHqgk84NAi1Q4VY4re8w2q8VKt&_nc_ohc=y4tWfKAbXZcAX_duUJJ&_nc_ht=scontent.fbkk5-3.fna&oh=969e3d3e7d8c29e40ab4c72dd53582d4&oe=5F4FCF21",
-    "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/114218776_273508990603681_1479752560853370431_o.jpg?_nc_cat=111&_nc_sid=0be424&_nc_eui2=AeELqNeYLGPhOkqsacwgUERa0sFPARmOVwLSwU8BGY5XAq2IdYZ2R_iM8X6KcTp5rhHrSSLPrSmhv-_gVkcIzZlJ&_nc_ohc=wBHSpEKcukQAX97xflV&_nc_ht=scontent.fbkk5-3.fna&oh=be9aba7a79d70c740b8906fee07c71f7&oe=5F514A60",
-    "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116696662_276896856931561_9068128738272014893_o.jpg?_nc_cat=104&_nc_sid=0be424&_nc_eui2=AeE0DH8eDa8c1cBJNnwvBYXHgMhyQHtysGWAyHJAe3KwZcGr-zETeiKugqIWhyyOVKJvMLvvuSEn2tyr_tWqUiy0&_nc_ohc=wG5pFM3CEOAAX-UOVGC&_nc_ht=scontent.fbkk5-5.fna&oh=72517f575f2cf19204f52b36bee8b3cb&oe=5F5018AD",
-    "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116637131_276950443592869_1220570832513759601_o.jpg?_nc_cat=104&_nc_sid=e007fa&_nc_eui2=AeEz0YE8wAs7EZzdKVMqFG06Kn4ze2ktuQ8qfjN7aS25D6naBA-hKoxHpbyxvD2S0cg0M-VZ-_mNJjIJmzUZUsxh&_nc_ohc=iWA4h5KfWNgAX_ctcVm&_nc_ht=scontent.fbkk5-5.fna&oh=4a68d058abfb72d98b46f83aff701cdf&oe=5F527B75",
+    // "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/116716203_281604803127433_6873937324063089041_o.jpg?_nc_cat=111&_nc_sid=e007fa&_nc_eui2=AeGhm0WJSkKy8DfYKeaf-GAsb_drZhyfmS5v92tmHJ-ZLq4UUg1c4EQz0jMDG2pHqgk84NAi1Q4VY4re8w2q8VKt&_nc_ohc=y4tWfKAbXZcAX_duUJJ&_nc_ht=scontent.fbkk5-3.fna&oh=969e3d3e7d8c29e40ab4c72dd53582d4&oe=5F4FCF21",
+    // "https://scontent.fbkk5-3.fna.fbcdn.net/v/t1.0-9/114218776_273508990603681_1479752560853370431_o.jpg?_nc_cat=111&_nc_sid=0be424&_nc_eui2=AeELqNeYLGPhOkqsacwgUERa0sFPARmOVwLSwU8BGY5XAq2IdYZ2R_iM8X6KcTp5rhHrSSLPrSmhv-_gVkcIzZlJ&_nc_ohc=wBHSpEKcukQAX97xflV&_nc_ht=scontent.fbkk5-3.fna&oh=be9aba7a79d70c740b8906fee07c71f7&oe=5F514A60",
+    // "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116696662_276896856931561_9068128738272014893_o.jpg?_nc_cat=104&_nc_sid=0be424&_nc_eui2=AeE0DH8eDa8c1cBJNnwvBYXHgMhyQHtysGWAyHJAe3KwZcGr-zETeiKugqIWhyyOVKJvMLvvuSEn2tyr_tWqUiy0&_nc_ohc=wG5pFM3CEOAAX-UOVGC&_nc_ht=scontent.fbkk5-5.fna&oh=72517f575f2cf19204f52b36bee8b3cb&oe=5F5018AD",
+    // "https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/116637131_276950443592869_1220570832513759601_o.jpg?_nc_cat=104&_nc_sid=e007fa&_nc_eui2=AeEz0YE8wAs7EZzdKVMqFG06Kn4ze2ktuQ8qfjN7aS25D6naBA-hKoxHpbyxvD2S0cg0M-VZ-_mNJjIJmzUZUsxh&_nc_ohc=iWA4h5KfWNgAX_ctcVm&_nc_ht=scontent.fbkk5-5.fna&oh=4a68d058abfb72d98b46f83aff701cdf&oe=5F527B75",
   ];
   @override
   Widget build(BuildContext context) {
@@ -306,25 +305,25 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  Future apiListcommunitys() async {
-    var client = http.Client();
-    try {
-      var response = await client.post('$api/community');
-      if (response.statusCode == 200) {
-        Map<String, dynamic> map = json.decode(response.body);
-        dynamic data = map["result"];
-        for (var i in data) {
-          setState(() {
-            CommunityModel _listCommunity = CommunityModel.fromJson(i);
-            _listCommunitys.add(_listCommunity);
-          });
-        }
-        return data;
-      } else {}
-    } finally {
-      client.close();
-    }
-  }
+  // Future apiListcommunitys() async {
+  //   var client = http.Client();
+  //   try {
+  //     var response = await client.post('$api/community');
+  //     if (response.statusCode == 200) {
+  //       Map<String, dynamic> map = json.decode(response.body);
+  //       dynamic data = map["result"];
+  //       for (var i in data) {
+  //         setState(() {
+  //           CommunityModel _listCommunity = CommunityModel.fromJson(i);
+  //           _listCommunitys.add(_listCommunity);
+  //         });
+  //       }
+  //       return data;
+  //     } else {}
+  //   } finally {
+  //     client.close();
+  //   }
+  // }
 
   // Future apiListimagesSlider() async {
   //   var client = http.Client();
