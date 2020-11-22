@@ -84,7 +84,7 @@ class StudentId {
   String problem;
   dynamic suggestion;
   String nameParents;
-  DateTime dateVisit;
+  dynamic dateVisit;
   String visitBy;
 
   factory StudentId.fromJson(Map<String, dynamic> json) => StudentId(
@@ -122,7 +122,7 @@ class StudentId {
         problem: json["problem"],
         suggestion: json["suggestion"],
         nameParents: json["name_parents"],
-        dateVisit: DateTime.parse(json["date_visit"]),
+        dateVisit: json["date_visit"],
         visitBy: json["visit_by"],
       );
 
@@ -161,8 +161,7 @@ class StudentId {
         "problem": problem,
         "suggestion": suggestion,
         "name_parents": nameParents,
-        "date_visit": dateVisit.toIso8601String(),
+        "date_visit": dateVisit,
         "visit_by": visitBy,
       };
 }
-  

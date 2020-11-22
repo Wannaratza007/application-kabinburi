@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:KABINBURI/Teacher/list_student.dart';
 import 'package:KABINBURI/model/student_model.dart';
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
@@ -121,6 +122,9 @@ class _VisitHomePageState extends State<VisitHomePage> {
             context,
             subtitle: "Success!",
             style: SweetAlertStyle.success,
+            onPress: (isConfirm) {
+              Navigator.of(context).pop();
+            },
           );
           setState(() {
             saveing = true;

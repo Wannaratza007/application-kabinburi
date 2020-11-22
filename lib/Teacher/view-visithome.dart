@@ -231,7 +231,7 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
       //       : Image.file(_imagevisit),
       // ),
       // child: CachedNetworkImage(
-      //   imageUrl: '$api/downloads/image_tablet/dispatch/$nameImg',
+      //   imageUrl: '$api/image/visit/$nameImg',
       //   fit: BoxFit.cover,
       // ),
     );
