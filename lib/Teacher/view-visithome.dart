@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:KABINBURI/model/studentID_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
-import 'package:KABINBURI/model/student_model.dart';
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +15,9 @@ class ViewVisitHomePage extends StatefulWidget {
 }
 
 class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
-  File _imagevisit, _imageAddress;
+  // File _imagevisit, _imageAddress;
   var students;
+  var nameimgVisit, nameimgAddress;
   var nameStd, prefixstd, firstSTD, lastSTD, deparment;
   var behaviorD = TextEditingController();
   var behaviorNotD = TextEditingController();
@@ -77,6 +76,8 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
                 students.visitBy == null ? '-' : students.visitBy;
             suggestion.text =
                 students.suggestion == null ? '-' : students.suggestion;
+            nameimgVisit = students.imageVisit;
+            nameimgAddress = students.imageMap;
           });
         }
         setState(() {
@@ -136,7 +137,7 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
       SizedBox(height: 15.0),
       buildpickimagevisit(context),
       SizedBox(height: 15.0),
-      titleSub('รูปภาพการเยี่ยมบ้าน'),
+      titleSub('รูปภาพที่อยู่นักศึกษา'),
       SizedBox(height: 15.0),
       buildpickimageAddress(context),
       SizedBox(height: 15.0),
@@ -209,10 +210,12 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
         borderRadius: BorderRadius.circular(12),
       ),
       margin: EdgeInsets.all(12.0),
-      child: Center(
-        child: _imageAddress == null
-            ? Icon(Icons.image, size: 80, color: Colors.grey)
-            : Image.file(_imageAddress),
+      child: CachedNetworkImage(
+        // imageUrl:
+        // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUNSd2ejwNMW6sMEbCUvn3cftgtngdDfBlLty8vipGZ9NTE43y5v7D8AzQpw281UGZcq-xvMyUpelaBR-B2YpILwoTu2LynWg&usqp=CAU&ec=45730947',
+        // imageUrl: '$api/$nameimgVisit',
+        imageUrl: '$api/image/address/$nameimgAddress',
+        fit: BoxFit.cover,
       ),
     );
   }
@@ -225,15 +228,13 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
         borderRadius: BorderRadius.circular(12),
       ),
       margin: EdgeInsets.all(12.0),
-      // child: Center(
-      //   child: _imagevisit == null
-      //       ? Icon(Icons.image, size: 80, color: Colors.grey)
-      //       : Image.file(_imagevisit),
-      // ),
-      // child: CachedNetworkImage(
-      //   imageUrl: '$api/image/visit/$nameImg',
-      //   fit: BoxFit.cover,
-      // ),
+      child: CachedNetworkImage(
+        // imageUrl:
+        // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUNSd2ejwNMW6sMEbCUvn3cftgtngdDfBlLty8vipGZ9NTE43y5v7D8AzQpw281UGZcq-xvMyUpelaBR-B2YpILwoTu2LynWg&usqp=CAU&ec=45730947',
+        // imageUrl: '$api/$nameimgVisit',
+        imageUrl: '$api/image/visit/$nameimgVisit',
+        fit: BoxFit.cover,
+      ),
     );
   }
 

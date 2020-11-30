@@ -91,8 +91,11 @@ class _DashboardTState extends State<DashboardT> {
 class OrdinalSales {
   final String year;
   final int sales;
+  final charts.Color color;
 
-  OrdinalSales(this.year, this.sales);
+  OrdinalSales(this.year, this.sales, Color color)
+      : this.color = new charts.Color(
+            r: color.red, g: color.green, b: color.blue, a: color.alpha);
 }
 
 class HomePage extends StatefulWidget {
@@ -146,9 +149,10 @@ class SimpleBarChart extends StatelessWidget {
   static List<charts.Series<OrdinalSales, String>> _createSampleData(
       var avisit, var anvisit) {
     final data = [
+      OrdinalSales('\n  จำนวน $anvisit คน  \n\n ที่ยังไม่ไปเยี่ยมบ้าน', anvisit,
+          Colors.grey),
       OrdinalSales(
-          '\n  จำนวน $anvisit คน  \n\n ที่ยังไม่ไปเยี่ยมบ้าน', anvisit),
-      OrdinalSales('\n  จำนวน $avisit คน  \n\n ไปเยี่ยมบ้านแล้ว', avisit),
+          '\n  จำนวน $avisit คน  \n\n ไปเยี่ยมบ้านแล้ว', avisit, Colors.blue),
     ];
 
     return [

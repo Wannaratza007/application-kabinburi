@@ -1,39 +1,38 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:KABINBURI/model/student_model.dart';
-import 'package:KABINBURI/style/connect_api.dart';
+import 'package:KABINBURI/model/list_account_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sweetalert/sweetalert.dart';
 
-class ListDataDeletePage extends StatefulWidget {
-  ListDataDeletePage({Key key}) : super(key: key);
+class ListAccounting extends StatefulWidget {
+  ListAccounting({Key key}) : super(key: key);
 
   @override
-  _ListDataDeletePageState createState() => _ListDataDeletePageState();
+  _ListAccountingState createState() => _ListAccountingState();
 }
 
-class _ListDataDeletePageState extends State<ListDataDeletePage> {
-  var searchname = TextEditingController();
+class _ListAccountingState extends State<ListAccounting> {
   var _refreshController = RefreshController(initialRefresh: false);
-  var students;
-  bool isLoading = true;
+  var searchname = TextEditingController();
   Timer timer;
-  var top = 10;
-
+  bool isLoading = true;
+  int top = 10;
+  var account;
   @override
   void initState() {
     super.initState();
-    apiSetData();
+    apilistAccount();
   }
 
-  Future apiSetData() async {
+  Future apilistAccount() async {
     var client = http.Client();
     try {
-      var _url = '$api/server/student/get-student-delete';
+      var _url = '$api/server/user/list-users';
       var _obj = {
         "top": (top).toString(),
         "firstnameSTD": searchname.text.trim(),
@@ -41,39 +40,33 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
       var response = await client.post(_url, body: _obj);
       var res = json.decode(response.body);
       if (res["status"] == true) {
-        students = res["result"].map((i) => Student.fromJson(i)).toList();
+        account = res["result"].map((i) => ListAccount.fromJson(i)).toList();
         setState(() {
           isLoading = false;
         });
       }
-
-      return true;
     } finally {
       client.close();
     }
   }
 
-  Future apitrailing(String type, int id) async {
-    print(id);
+  Future apideleteAccount(var userId) async {
     var client = http.Client();
     try {
-      var url;
-      if (type == 'reuse') {
-        url = 'reuse-student';
-      } else {
-        url = 'delete-student';
-      }
-      var _url = '$api/server/student/$url';
-      var response = await client.post(_url, body: {"id": "$id"});
-      var result = json.decode(response.body);
-      if (result['status'] == true) {
+      var _url = '$api/server/user/delete-user';
+      var _obj = {
+        "id": (userId).toString(),
+      };
+      var response = await client.post(_url, body: _obj);
+      var res = json.decode(response.body);
+      if (res["status"] == true) {
         SweetAlert.show(
           context,
           style: SweetAlertStyle.success,
           title: "Success",
         );
         setState(() {
-          apiSetData();
+          apilistAccount();
         });
       }
     } finally {
@@ -86,7 +79,8 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
     setState(() {
       top = 10;
       isLoading = false;
-      apiSetData();
+      apilistAccount();
+      searchname.clear();
     });
     _refreshController.refreshCompleted();
   }
@@ -97,7 +91,8 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
       setState(() {
         top += 5;
         isLoading = false;
-        apiSetData();
+        apilistAccount();
+        searchname.clear();
       });
     _refreshController.loadComplete();
   }
@@ -105,8 +100,16 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('List Account'),
+        leading: IconButton(
+          color: Colors.black,
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: Column(
-        children: <Widget>[
+        children: [
           tabSearch(),
           Flexible(
             child: Container(
@@ -137,9 +140,7 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 onLoading: _onLoading,
-                child: isLoading == true
-                    ? progress()
-                    : (students.length == 0 ? notedata() : showItem()),
+                child: isLoading == true ? progress() : showItem(),
               ),
             ),
           ),
@@ -148,24 +149,9 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
     );
   }
 
-  Widget notedata() {
-    return Center(
-      child: Container(
-        child: Text(
-          'ไม่พบข้อมูล',
-          style: TextStyle(
-            fontSize: 50.0,
-            fontWeight: FontWeight.w900,
-            color: mainColor,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget showItem() {
     return ListView.builder(
-      itemCount: students.length,
+      itemCount: account.length,
       itemBuilder: (context, i) => Container(
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
         child: Card(
@@ -174,18 +160,17 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
             leading: Icon(Icons.account_circle),
             title: Row(
               children: [
-                Text(students[i].firstnameStd, style: textlist),
+                Text(account[i].firstname, style: textlist),
                 SizedBox(width: 10.0),
-                Text(students[i].lastnameStd, style: textlist)
+                Text(account[i].lastname, style: textlist)
               ],
             ),
             subtitle: Container(
               margin: EdgeInsets.only(top: 5.0),
               child: Row(
                 children: [
-                  Text("${students[i].studygroup}", style: textlistsub),
-                  SizedBox(width: 10.0),
-                  Text("แผนก${students[i].deparmentName}", style: textlistsub),
+                  Text("แผนกวิชา  ${account[i].deparmentName}",
+                      style: textlistsub),
                 ],
               ),
             ),
@@ -200,14 +185,6 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
                       child: Wrap(
                         children: <Widget>[
                           ListTile(
-                            leading: new Icon(Icons.loop),
-                            title: new Text('กู้ข้อมูลนักศึกษา'),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              apitrailing('reuse', students[i].student);
-                            },
-                          ),
-                          ListTile(
                             leading: Icon(
                               Icons.delete,
                               color: Colors.red,
@@ -218,12 +195,12 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
                               SweetAlert.show(context,
                                   title: "คุณต้องการลบข้อมูล",
                                   subtitle:
-                                      "${students[i].prefixStd} ${students[i].firstnameStd}   ${students[i].lastnameStd}   หรือไม่ ?",
+                                      "คุณ  ${account[i].firstname}  แผนก${account[i].deparmentName}   หรือไม่ ?",
                                   style: SweetAlertStyle.confirm,
                                   showCancelButton: true,
                                   onPress: (bool isConfirm) {
                                 if (isConfirm) {
-                                  apitrailing('delete', students[i].student);
+                                  apideleteAccount(account[i].userId);
                                   return false;
                                 }
                               });
@@ -251,14 +228,14 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
           leading: Icon(Icons.search),
           title: TextField(
             onChanged: (value) {
-              timer = new Timer(const Duration(milliseconds: 500), () {
-                apiSetData();
+              timer = new Timer(const Duration(milliseconds: 100), () {
+                apilistAccount();
               });
             },
             style: TextStyle(fontSize: 18.0),
             controller: searchname,
             decoration: InputDecoration(
-              hintText: 'ชื่อนักเรียน  นักศึกษา',
+              hintText: 'ชื่อบัญชีผู้ใช้',
               border: InputBorder.none,
             ),
           ),
@@ -268,7 +245,7 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
               hidekeyboard();
               searchname.clear();
               setState(() {
-                apiSetData();
+                apilistAccount();
               });
             },
           ),

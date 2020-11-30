@@ -141,7 +141,7 @@ class _SignInPageState extends State<SignInPage> {
                         _buildSignInWithText(),
                         _buildLoginBtn(),
                         _buildSignInWithText(),
-                        _buildSignupBtn(),
+                        // _buildSignupBtn(),
                       ],
                     ),
                   ),

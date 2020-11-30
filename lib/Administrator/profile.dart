@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
+import 'list_account.dart';
+
 class ProflieAdmin extends StatefulWidget {
   ProflieAdmin({Key key}) : super(key: key);
 
@@ -72,34 +74,12 @@ class _ProflieAdminState extends State<ProflieAdmin> {
               trailing: Icon(Icons.arrow_forward_ios),
               title: Text('จัดการบัญชี', style: TextStyle(fontSize: 18.0)),
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => Accounting()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ListAccounting()),
+                );
               },
             ),
-            // ListTile(
-            //   leading: Icon(Icons.apps),
-            //   trailing: Icon(Icons.arrow_forward_ios),
-            //   title: Text('เพิ่มข่าวสาร', style: TextStyle(fontSize: 18.0)),
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => AddNewMessages()),
-            //     );
-            //   },
-            // ),
-            // ListTile(
-            //   leading: Icon(Icons.apps),
-            //   trailing: Icon(Icons.arrow_forward_ios),
-            //   title: Text('เพิ่มกิจกรรม', style: TextStyle(fontSize: 18.0)),
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => AddNewCommunoty()),
-            //     );
-            //   },
-            // ),
             ListTile(
               leading: Icon(Icons.exit_to_app, color: Colors.red),
               title: Text(

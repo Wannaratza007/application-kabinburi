@@ -89,12 +89,12 @@ class _VisitHomePageState extends State<VisitHomePage> {
   }
 
   Future apisaveDataVisit() async {
+    SweetAlert.show(context,
+        subtitle: "Save...", style: SweetAlertStyle.loading);
     var client = http.Client();
     var pfs = await SharedPreferences.getInstance();
     var visitBy = pfs.getString('firstname') + " " + pfs.getString('lastname');
     try {
-      SweetAlert.show(context,
-          subtitle: "Save...", style: SweetAlertStyle.loading);
       if (_imagevisit == null && _imageAddress == null) return;
       String base64Imagevisit = base64Encode(_imagevisit.readAsBytesSync());
       String fileNamevisit = _imagevisit.path.split("/").last;
@@ -190,7 +190,7 @@ class _VisitHomePageState extends State<VisitHomePage> {
                   SizedBox(height: 15.0),
                   buildpickimagevisit(context),
                   SizedBox(height: 15.0),
-                  titleSub('รูปภาพการเยี่ยมบ้าน'),
+                  titleSub('รูปภาพที่อยู่'),
                   SizedBox(height: 15.0),
                   buildpickimageAddress(context),
                   SizedBox(height: 15.0),

@@ -31,7 +31,7 @@ class _MainAdminPageState extends State<MainAdminPage> {
         return ProflieAdmin();
         break;
       default:
-      // return HomePage();
+        return HomePage();
     }
   }
 
