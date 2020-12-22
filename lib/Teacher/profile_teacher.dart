@@ -106,6 +106,7 @@ class _ProfileTeacherState extends State<ProfileTeacher> {
                 SweetAlert.show(context,
                     subtitle: "คุณต้องการออกจากระบบหรือไม่ ?",
                     style: SweetAlertStyle.confirm,
+                    // ignore: missing_return
                     showCancelButton: true, onPress: (bool isConfirm) {
                   if (isConfirm) {
                     logout(context);

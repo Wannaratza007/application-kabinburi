@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:KABINBURI/Teacher/list_student.dart';
+import 'package:KABINBURI/Teacher/signature.dart';
 import 'package:KABINBURI/model/student_model.dart';
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +21,8 @@ class VisitHomePage extends StatefulWidget {
 }
 
 class _VisitHomePageState extends State<VisitHomePage> {
-  File _imagevisit, _imageAddress;
+  File _imagevisit;
+  File _imageAddress;
   var students;
   var nameStd, prefixstd, firstSTD, lastSTD, deparment;
   var behaviorD = TextEditingController();
@@ -33,6 +33,7 @@ class _VisitHomePageState extends State<VisitHomePage> {
   var nameTHVisit = TextEditingController();
   bool loadData = false;
   bool saveing = true;
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -43,7 +44,10 @@ class _VisitHomePageState extends State<VisitHomePage> {
   Future apiGetDataID() async {
     var client = http.Client();
     var pfs = await SharedPreferences.getInstance();
-    var visitBy = pfs.getString('firstname') + " " + pfs.getString('lastname');
+    var visitBy = pfs.getString('prefix') +
+        pfs.getString('firstname') +
+        " " +
+        pfs.getString('lastname');
     try {
       var _url = '$api/server/student/get-studentId';
       var _obj = {
@@ -74,7 +78,10 @@ class _VisitHomePageState extends State<VisitHomePage> {
                 '  ' +
                 groupS;
             deparment = 'แผนกวิชา  ' + deparmentS;
-            nameGD.text = students.firstnameGd + ' ' + students.lastnameGd;
+            nameGD.text = students.prefixGd +
+                students.firstnameGd +
+                ' ' +
+                students.lastnameGd;
             nameTHVisit.text = visitBy;
           });
         }
@@ -89,12 +96,10 @@ class _VisitHomePageState extends State<VisitHomePage> {
   }
 
   Future apisaveDataVisit() async {
-    SweetAlert.show(context,
-        subtitle: "Save...", style: SweetAlertStyle.loading);
     var client = http.Client();
-    var pfs = await SharedPreferences.getInstance();
-    var visitBy = pfs.getString('firstname') + " " + pfs.getString('lastname');
     try {
+      SweetAlert.show(context,
+          subtitle: "Save...", style: SweetAlertStyle.loading);
       if (_imagevisit == null && _imageAddress == null) return;
       String base64Imagevisit = base64Encode(_imagevisit.readAsBytesSync());
       String fileNamevisit = _imagevisit.path.split("/").last;
@@ -111,7 +116,7 @@ class _VisitHomePageState extends State<VisitHomePage> {
         "problem": problem.text.trim(),
         "suggestion": suggestion.text.trim(),
         "nameGD": nameGD.text.trim(),
-        "visit_By": visitBy,
+        "visit_By": nameTHVisit.text.trim(),
       };
       var response =
           await client.post('$api/server/student/visthome-student', body: _obj);
@@ -122,6 +127,7 @@ class _VisitHomePageState extends State<VisitHomePage> {
             context,
             subtitle: "Success!",
             style: SweetAlertStyle.success,
+            // ignore: missing_return
             onPress: (isConfirm) {
               Navigator.of(context).pop();
             },
@@ -153,20 +159,17 @@ class _VisitHomePageState extends State<VisitHomePage> {
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        // actions: [
-        //   Container(
-        //     margin: EdgeInsets.only(right: 10.0),
-        //     child: IconButton(
-        //       icon: Icon(Icons.edit),
-        //       onPressed: () => Navigator.push(
-        //         context,
-        //         MaterialPageRoute(
-        //           builder: (context) => Signture(),
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.volume_up),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Signture()),
+              );
+            },
+          )
+        ],
       ),
       body: loadData == false
           ? Center(
@@ -244,6 +247,7 @@ class _VisitHomePageState extends State<VisitHomePage> {
               : SweetAlert.show(context,
                   subtitle: "คุณต้องการบันทึกข้อมูลหรือไม่ ?",
                   style: SweetAlertStyle.confirm,
+                  // ignore: missing_return
                   showCancelButton: true, onPress: (bool isConfirm) {
                   if (isConfirm) {
                     setState(() {
@@ -345,7 +349,7 @@ class _VisitHomePageState extends State<VisitHomePage> {
                   leading: new Icon(Icons.camera_alt),
                   title: new Text('Camera'),
                   onTap: () {
-                    getImageVisit(ImageSource.camera);
+                    getImageVisit('camera');
                     Navigator.of(context).pop();
                   },
                 ),
@@ -354,7 +358,7 @@ class _VisitHomePageState extends State<VisitHomePage> {
                   title: new Text('Gallery'),
                   onTap: () {
                     Navigator.of(context).pop();
-                    getImageVisit(ImageSource.gallery);
+                    getImageVisit('gallery');
                   },
                 ),
               ],
@@ -379,25 +383,26 @@ class _VisitHomePageState extends State<VisitHomePage> {
   }
 
   Future getImageAddresst() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    print("mage.path :" + image.path);
+    // var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    dynamic image = await picker.getImage(source: ImageSource.gallery);
     setState(() {
-      _imageAddress = image;
+      _imageAddress = File(image.path);
     });
   }
 
-  Future getImageVisit(ImageSource type) async {
-    var image = await ImagePicker.pickImage(source: type);
-    // ignore: unrelated_type_equality_checks
-    if (type == "ImageSource.camera") {
-      if (_imagevisit != null) {
-        GallerySaver.saveImage(_imagevisit.path, albumName: 'KabinBuriApp');
-      }
+  Future getImageVisit(String type) async {
+    dynamic image;
+    if (type == 'camera') {
+      image = await picker.getImage(source: ImageSource.camera);
+    } else if (type == 'gallery') {
+      image = await picker.getImage(source: ImageSource.gallery);
     }
-    setState(() {
-      _imagevisit = image;
-    });
-    print(type);
+    if (image != null) {
+      // GallerySaver.saveImage(_imagevisit.path, albumName: 'KabinBuriApp');
+      setState(() {
+        _imagevisit = File(image.path);
+      });
+    }
   }
 
   Widget border() {

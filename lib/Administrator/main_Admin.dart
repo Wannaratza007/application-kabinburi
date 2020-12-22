@@ -19,7 +19,7 @@ class _MainAdminPageState extends State<MainAdminPage> {
   Widget pageIndex(int currentIndex) {
     switch (currentIndex) {
       case 0:
-        return HomePage();
+        return AdminT();
         break;
       case 1:
         return AddAccounting();
@@ -31,9 +31,10 @@ class _MainAdminPageState extends State<MainAdminPage> {
         return ProflieAdmin();
         break;
       default:
-        return HomePage();
+        return AdminT();
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -26,14 +26,13 @@ class _SignInPageState extends State<SignInPage> {
   bool islogin = false;
 
   Future checkLogin() async {
-    print('xxxxxxxxxxxxxxxxxxxxxxxxx');
     var client = http.Client();
     print('username : ' + '  ' + username.text.trim());
     print('password : ' + '  ' + password.text.trim());
     var user = username.text.trim();
     var pass = password.text.trim();
     try {
-      var _obj = {'username': user, 'password': pass};
+      var _obj = {'username': user, 'password': pass.toString()};
       var response = await client.post('$api/server/user/login', body: _obj);
       var result = json.decode(response.body);
       if (result['status'] == true) {
@@ -42,6 +41,7 @@ class _SignInPageState extends State<SignInPage> {
           var status = usermodel.status;
           var pfn = await SharedPreferences.getInstance();
           pfn.setInt('id', usermodel.userId);
+          pfn.setString('prefix', usermodel.prefix);
           pfn.setString('firstname', usermodel.firstname);
           pfn.setString('lastname', usermodel.lastname);
           pfn.setString('status', usermodel.status);
@@ -286,6 +286,7 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildSignupBtn() {
     return GestureDetector(
       onTap: () {

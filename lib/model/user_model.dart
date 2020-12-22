@@ -12,6 +12,7 @@ class User {
     User({
         this.userId,
         this.deparmentId,
+        this.prefix,
         this.firstname,
         this.lastname,
         this.username,
@@ -24,6 +25,7 @@ class User {
 
     int userId;
     int deparmentId;
+    String prefix;
     String firstname;
     String lastname;
     String username;
@@ -36,6 +38,7 @@ class User {
     factory User.fromJson(Map<String, dynamic> json) => User(
         userId: json["userID"],
         deparmentId: json["deparmentID"],
+        prefix: json["prefix"],
         firstname: json["firstname"],
         lastname: json["lastname"],
         username: json["username"],
@@ -49,6 +52,7 @@ class User {
     Map<String, dynamic> toJson() => {
         "userID": userId,
         "deparmentID": deparmentId,
+        "prefix": prefix,
         "firstname": firstname,
         "lastname": lastname,
         "username": username,

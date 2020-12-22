@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:KABINBURI/style/connect_api.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
@@ -12,11 +15,65 @@ class ClicksPerYear {
             r: color.red, g: color.green, b: color.blue, a: color.alpha);
 }
 
-class HomePage extends StatelessWidget {
+class AdminT extends StatefulWidget {
+  AdminT({Key key}) : super(key: key);
+
+  @override
+  _AdminTState createState() => _AdminTState();
+}
+
+class _AdminTState extends State<AdminT> {
   var style = TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
   static final DateTime now = DateTime.now();
   static final DateFormat formatter = DateFormat('dd-MM-yyyy');
   final String formatted = formatter.format(now);
+
+  dynamic computer_n = 0;
+  dynamic computer_v = 0;
+  dynamic accounting_n = 0;
+  dynamic accounting_v = 0;
+  dynamic maintenance_n = 0;
+  dynamic maintenance_v = 0;
+  dynamic retail_n = 0;
+  dynamic retail_v = 0;
+  dynamic mechanic_n = 0;
+  dynamic mechanic_v = 0;
+  dynamic electrician_n = 0;
+  dynamic electrician_v = 0;
+  dynamic electronic_n = 0;
+  dynamic electronic_v = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getdata();
+  }
+
+  Future getdata() async {
+    var client = http.Client();
+    var res = await client.post('$api/server/dashboard/admin');
+    var result = json.decode(res.body);
+    var status = result["status"];
+    var results = result["result"];
+    if (status) {
+      setState(() {
+        computer_n = results["computer_n"];
+        computer_v = results["computer_v"];
+        accounting_n = results["accounting_n"];
+        accounting_v = results["accounting_v"];
+        maintenance_n = results["maintenance_n"];
+        maintenance_v = results["maintenance_v"];
+        retail_n = results["retail_n"];
+        retail_v = results["retail_v"];
+        mechanic_n = results["mechanic_n"];
+        mechanic_v = results["mechanic_v"];
+        electrician_n = results["electrician_n"];
+        electrician_v = results["electrician_v"];
+        electronic_n = results["electronic_n"];
+        electronic_v = results["electronic_v"];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,53 +81,53 @@ class HomePage extends StatelessWidget {
 
     var datacom = [
       new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n  แผนกวิชาคอมพิวเตอร์ธุรกิจ',
-          12, Colors.grey),
+          computer_n, Colors.grey),
       new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n  แผนกวิชาคอมพิวเตอร์ธุรกิจ',
-          42, Colors.blue),
+          computer_v, Colors.blue),
     ];
 
     var dataaccount = [
-      new ClicksPerYear(
-          '\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาการบัญชี', 12, Colors.grey),
-      new ClicksPerYear(
-          '\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาการบัญชี', 42, Colors.blue),
+      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาการบัญชี',
+          accounting_n, Colors.grey),
+      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาการบัญชี',
+          accounting_v, Colors.blue),
     ];
 
     var datamaintenance = [
-      new ClicksPerYear(
-          '\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างซ่อมบำรุง', 12, Colors.grey),
-      new ClicksPerYear(
-          '\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างซ่อมบำรุง', 42, Colors.blue),
+      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างซ่อมบำรุง',
+          maintenance_n, Colors.grey),
+      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างซ่อมบำรุง',
+          maintenance_v, Colors.blue),
     ];
 
     var dataretail = [
-      new ClicksPerYear(
-          '\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาธุรกิจค้าปลีก', 12, Colors.grey),
-      new ClicksPerYear(
-          '\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาธุรกิจค้าปลีก', 42, Colors.blue),
+      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาธุรกิจค้าปลีก',
+          retail_n, Colors.grey),
+      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาธุรกิจค้าปลีก',
+          retail_v, Colors.blue),
     ];
 
     var datamechanic = [
-      new ClicksPerYear(
-          '\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างยนต์', 12, Colors.grey),
-      new ClicksPerYear(
-          '\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างยนต์', 42, Colors.blue),
+      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างยนต์',
+          mechanic_n, Colors.grey),
+      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างยนต์',
+          mechanic_v, Colors.blue),
     ];
 
     var dataelectrician = [
       new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างไฟฟ้ากำลัง',
-          12, Colors.grey),
-      new ClicksPerYear(
-          '\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างไฟฟ้ากำลัง', 42, Colors.blue),
+          electrician_n, Colors.grey),
+      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างไฟฟ้ากำลัง',
+          electrician_v, Colors.blue),
     ];
 
     var dataelectronic = [
       new ClicksPerYear(
           '\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างอิเล็กทรอนิกส์',
-          12,
+          electronic_n,
           Colors.grey),
       new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างอิเล็กทรอนิกส์',
-          42, Colors.blue),
+          electronic_v, Colors.blue),
     ];
 
     var seriescom = [
@@ -269,7 +326,7 @@ class HomePage extends StatelessWidget {
       ),
     );
 
-    return new Scaffold(
+    return Scaffold(
       body: Container(
         margin: EdgeInsets.only(top: 40),
         child: Center(
@@ -298,22 +355,5 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
-
-    /* 
-                Text('แผนกวิชา คอมพิวเตอร์ธุรกิจ', style: style),
-                chartWidgetcom,
-                Text('แผนกวิชา การบัญชี', style: style),
-                chartWidgetaccount,
-                Text('แผนกวิชา ช่างซ่อมบำรุง', style: style),
-                chartWidgetmaintenance,
-                Text('แผนกวิชา ธุรกิจค้าปลีก', style: style),
-                chartWidgetretail,
-                Text('แผนกวิชา ช่างยนต์', style: style),
-                chartWidgetmechanic,
-                Text('แผนกวิชา ช่างไฟฟ้ากำลัง', style: style),
-                chartWidgetelectrician,
-                Text('แผนกวิชา ช่างอิเล็กทรอนิกส์', style: style),
-                chartWidgetelectronic,
-    */
   }
 }

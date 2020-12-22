@@ -4,90 +4,90 @@
 
 import 'dart:convert';
 
-List<StudentId> studentIdFromJson(String str) =>
-    List<StudentId>.from(json.decode(str).map((x) => StudentId.fromJson(x)));
+List<StudentId> studentIdFromJson(String str) => List<StudentId>.from(json.decode(str).map((x) => StudentId.fromJson(x)));
 
-String studentIdToJson(List<StudentId> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String studentIdToJson(List<StudentId> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class StudentId {
-  StudentId({
-    this.student,
-    this.deparmentId,
-    this.codeStd,
-    this.prefixStd,
-    this.firstnameStd,
-    this.lastnameStd,
-    this.phonesStd,
-    this.cardNumber,
-    this.studygroup,
-    this.prefixGd,
-    this.firstnameGd,
-    this.lastnameGd,
-    this.phonesGd,
-    this.numberHomes,
-    this.village,
-    this.road,
-    this.province,
-    this.aumphuer,
-    this.district,
-    this.post,
-    this.isActive,
-    this.isVisit,
-    this.deparment,
-    this.deparmentName,
-    this.visit,
-    this.studentId,
-    this.imageVisit,
-    this.imageMap,
-    this.signture,
-    this.behaviorD,
-    this.behaviorNotD,
-    this.problem,
-    this.suggestion,
-    this.nameParents,
-    this.dateVisit,
-    this.visitBy,
-  });
+    StudentId({
+        this.student,
+        this.deparmentId,
+        this.codeStd,
+        this.prefixStd,
+        this.firstnameStd,
+        this.lastnameStd,
+        this.phonesStd,
+        this.cardNumber,
+        this.studygroup,
+        this.prefixGd,
+        this.firstnameGd,
+        this.lastnameGd,
+        this.phonesGd,
+        this.numberHomes,
+        this.alley,
+        this.village,
+        this.road,
+        this.province,
+        this.aumphuer,
+        this.district,
+        this.post,
+        this.isActive,
+        this.isVisit,
+        this.deparment,
+        this.deparmentName,
+        this.visit,
+        this.studentId,
+        this.imageVisit,
+        this.imageMap,
+        this.signture,
+        this.behaviorD,
+        this.behaviorNotD,
+        this.problem,
+        this.suggestion,
+        this.nameParents,
+        this.dateVisit,
+        this.visitBy,
+    });
 
-  int student;
-  String deparmentId;
-  String codeStd;
-  String prefixStd;
-  String firstnameStd;
-  String lastnameStd;
-  dynamic phonesStd;
-  String cardNumber;
-  String studygroup;
-  String prefixGd;
-  String firstnameGd;
-  String lastnameGd;
-  String phonesGd;
-  String numberHomes;
-  String village;
-  String road;
-  String province;
-  String aumphuer;
-  String district;
-  String post;
-  int isActive;
-  int isVisit;
-  int deparment;
-  String deparmentName;
-  int visit;
-  String studentId;
-  String imageVisit;
-  String imageMap;
-  dynamic signture;
-  String behaviorD;
-  String behaviorNotD;
-  String problem;
-  dynamic suggestion;
-  String nameParents;
-  dynamic dateVisit;
-  String visitBy;
+    int student;
+    String deparmentId;
+    String codeStd;
+    String prefixStd;
+    String firstnameStd;
+    String lastnameStd;
+    dynamic phonesStd;
+    String cardNumber;
+    String studygroup;
+    String prefixGd;
+    String firstnameGd;
+    String lastnameGd;
+    String phonesGd;
+    String numberHomes;
+    dynamic alley;
+    String village;
+    String road;
+    String province;
+    String aumphuer;
+    String district;
+    String post;
+    int isActive;
+    int isVisit;
+    int deparment;
+    String deparmentName;
+    int visit;
+    String studentId;
+    String imageVisit;
+    String imageMap;
+    dynamic signture;
+    String behaviorD;
+    String behaviorNotD;
+    String problem;
+    String suggestion;
+    String nameParents;
+    DateTime dateVisit;
+    String visitBy;
 
-  factory StudentId.fromJson(Map<String, dynamic> json) => StudentId(
+    factory StudentId.fromJson(Map<String, dynamic> json) => StudentId(
         student: json["student"],
         deparmentId: json["deparmentID"],
         codeStd: json["codeSTD"],
@@ -102,6 +102,7 @@ class StudentId {
         lastnameGd: json["lastnameGD"],
         phonesGd: json["phonesGD"],
         numberHomes: json["numberHomes"],
+        alley: json["alley"],
         village: json["village"],
         road: json["road"],
         province: json["province"],
@@ -122,11 +123,11 @@ class StudentId {
         problem: json["problem"],
         suggestion: json["suggestion"],
         nameParents: json["name_parents"],
-        dateVisit: json["date_visit"],
+        dateVisit: DateTime.parse(json["date_visit"]),
         visitBy: json["visit_by"],
-      );
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
         "student": student,
         "deparmentID": deparmentId,
         "codeSTD": codeStd,
@@ -141,6 +142,7 @@ class StudentId {
         "lastnameGD": lastnameGd,
         "phonesGD": phonesGd,
         "numberHomes": numberHomes,
+        "alley": alley,
         "village": village,
         "road": road,
         "province": province,
@@ -161,7 +163,7 @@ class StudentId {
         "problem": problem,
         "suggestion": suggestion,
         "name_parents": nameParents,
-        "date_visit": dateVisit,
+        "date_visit": dateVisit.toIso8601String(),
         "visit_by": visitBy,
-      };
+    };
 }

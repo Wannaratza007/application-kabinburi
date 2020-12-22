@@ -139,7 +139,8 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
                 onLoading: _onLoading,
                 child: isLoading == true
                     ? progress()
-                    : (students.length == 0 ? notedata() : showItem()),
+                    // : (students.length == 0 ? notedata() : showItem()),
+                    : showItem(),
               ),
             ),
           ),
@@ -221,6 +222,7 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
                                       "${students[i].prefixStd} ${students[i].firstnameStd}   ${students[i].lastnameStd}   หรือไม่ ?",
                                   style: SweetAlertStyle.confirm,
                                   showCancelButton: true,
+                                  // ignore: missing_return
                                   onPress: (bool isConfirm) {
                                 if (isConfirm) {
                                   apitrailing('delete', students[i].student);

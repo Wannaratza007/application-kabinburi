@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:KABINBURI/model/list_account_model.dart';
+import 'package:KABINBURI/model/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
@@ -40,7 +40,7 @@ class _ListAccountingState extends State<ListAccounting> {
       var response = await client.post(_url, body: _obj);
       var res = json.decode(response.body);
       if (res["status"] == true) {
-        account = res["result"].map((i) => ListAccount.fromJson(i)).toList();
+        account = res["result"].map((i) => User.fromJson(i)).toList();
         setState(() {
           isLoading = false;
         });
@@ -198,6 +198,7 @@ class _ListAccountingState extends State<ListAccounting> {
                                       "คุณ  ${account[i].firstname}  แผนก${account[i].deparmentName}   หรือไม่ ?",
                                   style: SweetAlertStyle.confirm,
                                   showCancelButton: true,
+                                  // ignore: missing_return
                                   onPress: (bool isConfirm) {
                                 if (isConfirm) {
                                   apideleteAccount(account[i].userId);

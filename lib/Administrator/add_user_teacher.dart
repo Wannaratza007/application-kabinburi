@@ -21,6 +21,10 @@ class _AddAccountingState extends State<AddAccounting> {
   var password = TextEditingController();
   var confirmpassword = TextEditingController();
   var selecteddeparment;
+  var currentSelectedprefix;
+
+  final _prefixGD = ["นาย", "นาง", "นางสาว"];
+
   final _deparment = [
     "แผนกวิชาคอมพิวเตอร์ธุรกิจ",
     "แผนกวิชาการบัญชี",
@@ -52,6 +56,7 @@ class _AddAccountingState extends State<AddAccounting> {
                   child: Column(
                     children: <Widget>[
                       titleText(),
+                      prefixUser(),
                       input('Firstname', false, firstname, TextInputType.text,
                           'กรุณากรอก ชื่อผู้ใช้'),
                       input('Lastname', false, lastname, TextInputType.text,
@@ -60,7 +65,7 @@ class _AddAccountingState extends State<AddAccounting> {
                           'กรุณากรอก username'),
                       input('Password', true, password, TextInputType.number,
                           'กรุณากรอก password'),
-                      input('Confirm Password', false, confirmpassword,
+                      input('Confirm Password', true, confirmpassword,
                           TextInputType.number, 'กรุณากรอก Confirm Password'),
                       daparment(),
                       buttonSave(),
@@ -95,6 +100,7 @@ class _AddAccountingState extends State<AddAccounting> {
       iddeparment = 7;
     }
     var _obj = {
+      'prefix': currentSelectedprefix,
       'firstname': firstname.text.trim(),
       'lastname': lastname.text.trim(),
       'username': username.text.trim(),
@@ -113,10 +119,10 @@ class _AddAccountingState extends State<AddAccounting> {
             backgroundColor: Colors.green,
             icon: Icons.check_circle_outline);
         // Future.delayed(new Duration(milliseconds: 800), () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MainAdminPage()),
-          );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MainAdminPage()),
+        );
         // });
       }
       return data;
@@ -148,6 +154,44 @@ class _AddAccountingState extends State<AddAccounting> {
     } finally {
       client.close();
     }
+  }
+
+  Widget prefixUser() {
+    return Container(
+      padding: EdgeInsets.only(left: 20.0, right: 25.0, top: 20.0),
+      child: FormField<String>(
+        builder: (FormFieldState<String> state) {
+          return InputDecorator(
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                borderSide: BorderSide(color: Colors.grey, width: 1),
+              ),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                icon: Icon(Icons.arrow_drop_down, color: indexColor),
+                hint: Text("คำนำหน้าชื่อ"),
+                value: currentSelectedprefix,
+                isDense: true,
+                onChanged: (newValue) {
+                  setState(() {
+                    currentSelectedprefix = newValue;
+                  });
+                  print(currentSelectedprefix);
+                },
+                items: _prefixGD.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget buttonSave() {
@@ -259,7 +303,7 @@ class _AddAccountingState extends State<AddAccounting> {
             ),
           ),
           Text(
-            'จัดการบัญชีผู้ใช้',
+            'เพิ่มบัญชีผู้ใช้',
             style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,

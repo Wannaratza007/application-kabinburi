@@ -1,11 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:KABINBURI/model/studentID_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
+import 'package:ext_storage/ext_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:async';
+import 'package:sweetalert/sweetalert.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
+// ignore: must_be_immutable
 class ViewVisitHomePage extends StatefulWidget {
   int idStudent;
   ViewVisitHomePage({Key key, this.idStudent}) : super(key: key);
@@ -15,7 +24,6 @@ class ViewVisitHomePage extends StatefulWidget {
 }
 
 class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
-  // File _imagevisit, _imageAddress;
   var students;
   var nameimgVisit, nameimgAddress;
   var nameStd, prefixstd, firstSTD, lastSTD, deparment;
@@ -26,11 +34,81 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
   var nameGD = TextEditingController();
   var nameTHVisit = TextEditingController();
   bool loadData = false;
+  var filePDFname;
+
+  Future<void> _download() async {
+    print("_download()");
+    final dir = await _getDownloadDirectory();
+    final savePath = path.join(dir, "student_44.pdf");
+    await _startDownload(savePath);
+  }
+
+  Future _getDownloadDirectory() async {
+    String path = await ExtStorage.getExternalStoragePublicDirectory(
+        ExtStorage.DIRECTORY_DOWNLOADS);
+    return path;
+  }
+
+  Future<void> _startDownload(String savePath) async {
+    print("_startDownload()");
+    Map<String, dynamic> result = {
+      'isSuccess': false,
+      'filePath': null,
+      'error': null,
+    };
+
+    try {
+      final directory = await getExternalStorageDirectory();
+      final path = directory.path;
+      var filename = "บันทึกการเยี่ยมบ้าน" +
+          students.firstnameStd +
+          "  " +
+          students.lastnameStd;
+      String fullPath = "$path/$filename.pdf";
+      final response = await Dio().download(
+        "$api/form/pdf/$filePDFname",
+        fullPath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            print((received / total * 100).toStringAsFixed(0) + "%");
+          }
+        },
+      );
+      result['isSuccess'] = response.statusCode == 200;
+      result['filePath'] = savePath;
+      print(savePath);
+      SweetAlert.show(context,
+          subtitle: "Download File Success", style: SweetAlertStyle.success);
+    } catch (ex) {
+      result['error'] = ex.toString();
+      SweetAlert.show(context, subtitle: "$ex", style: SweetAlertStyle.error);
+      print(ex);
+    } finally {}
+  }
 
   @override
   void initState() {
     super.initState();
     apiGetDataID();
+  }
+
+  Future getPDF() async {
+    try {
+      var client = http.Client();
+      var _url = '$api/api/form/studentInformation';
+      var _obj = {
+        "userID": (students.student).toString(),
+      };
+      var response = await client.post(_url, body: _obj);
+      var res = jsonDecode(response.body);
+      setState(() {
+        filePDFname = res;
+        _download();
+      });
+    } catch (e) {
+      SweetAlert.show(context, subtitle: "$e", style: SweetAlertStyle.error);
+      print(e);
+    }
   }
 
   Future apiGetDataID() async {
@@ -105,7 +183,7 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [progress()],
+                children: [CircularProgressIndicator()],
               ),
             )
           : Container(
@@ -169,7 +247,7 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
       height: 65.0,
       child: RaisedButton(
         child: Text(
-          'PRINT',
+          'Download File',
           style: TextStyle(
             fontSize: 24.0,
           ),
@@ -178,7 +256,11 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         textColor: Colors.white,
         color: Colors.blue,
-        onPressed: () {},
+        onPressed: () {
+          getPDF();
+          SweetAlert.show(context,
+              subtitle: "Downloading...", style: SweetAlertStyle.loading);
+        },
       ),
     );
   }
@@ -211,9 +293,6 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
       ),
       margin: EdgeInsets.all(12.0),
       child: CachedNetworkImage(
-        // imageUrl:
-        // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUNSd2ejwNMW6sMEbCUvn3cftgtngdDfBlLty8vipGZ9NTE43y5v7D8AzQpw281UGZcq-xvMyUpelaBR-B2YpILwoTu2LynWg&usqp=CAU&ec=45730947',
-        // imageUrl: '$api/$nameimgVisit',
         imageUrl: '$api/image/address/$nameimgAddress',
         fit: BoxFit.cover,
       ),
@@ -229,9 +308,6 @@ class _ViewVisitHomePageState extends State<ViewVisitHomePage> {
       ),
       margin: EdgeInsets.all(12.0),
       child: CachedNetworkImage(
-        // imageUrl:
-        // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUNSd2ejwNMW6sMEbCUvn3cftgtngdDfBlLty8vipGZ9NTE43y5v7D8AzQpw281UGZcq-xvMyUpelaBR-B2YpILwoTu2LynWg&usqp=CAU&ec=45730947',
-        // imageUrl: '$api/$nameimgVisit',
         imageUrl: '$api/image/visit/$nameimgVisit',
         fit: BoxFit.cover,
       ),

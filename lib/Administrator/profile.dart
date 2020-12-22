@@ -90,6 +90,7 @@ class _ProflieAdminState extends State<ProflieAdmin> {
                 SweetAlert.show(context,
                     subtitle: "คุณต้องการออกจากระบบหรือไม่ ?",
                     style: SweetAlertStyle.confirm,
+                    // ignore: missing_return
                     showCancelButton: true, onPress: (bool isConfirm) {
                   if (isConfirm) {
                     logout(context);
