@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:KABINBURI/style/contsan.dart';
 import 'package:http/http.dart' as http;
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,6 @@ class DashboardT extends StatefulWidget {
 }
 
 class _DashboardTState extends State<DashboardT> {
-  var style = TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
   static final DateTime now = DateTime.now();
   static final DateFormat formatter = DateFormat('dd/MM/yyyy');
   final String formatted = formatter.format(now);
@@ -40,13 +40,17 @@ class _DashboardTState extends State<DashboardT> {
 
   Future getDeparment() async {
     if (this.mounted) {
-      var client = http.Client();
       var preferences = await SharedPreferences.getInstance();
       var deparmentuser = preferences.getString('deparment');
       var deparmentIDusers = preferences.getInt('deparmentID');
       var _url = '$api/server/dashboard/teacher';
-      var _obj = {"deparmentid": (deparmentIDusers).toString()};
-      var res = await client.post(_url, body: _obj);
+      var obj = {"deparmentid": (deparmentIDusers).toString()};
+      var _obj = jsonEncode(obj);
+      var res = await http.post(_url,
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: _obj);
       var result = json.decode(res.body);
       var data = result["result"];
       setState(() {
@@ -97,31 +101,27 @@ class _DashboardTState extends State<DashboardT> {
     );
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                // width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.fromLTRB(0, 40.0, 0, 0),
                 child: Text("ข้อมูลนักเรียน นักศึกษา  $deparmentusers",
                     style: style),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
+              Container(
                 child: chartWidget,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
+              Container(
+                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
                 child: Text('ข้อมูลนักเรียน นักศึกษา ณ วันที่  $formatted',
                     style: style),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

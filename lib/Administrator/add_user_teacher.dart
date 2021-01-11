@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:KABINBURI/Administrator/main_Admin.dart';
 import 'package:KABINBURI/style/contsan.dart';
+import 'package:KABINBURI/style/singout.dart';
 import 'package:edge_alert/edge_alert.dart';
 import 'package:http/http.dart' as http;
 import 'package:KABINBURI/style/connect_api.dart';
@@ -81,36 +82,37 @@ class _AddAccountingState extends State<AddAccounting> {
   }
 
   Future apiAdduser() async {
-    var client = http.Client();
-    var namedeparment = selecteddeparment;
     var iddeparment;
-    if (namedeparment == "แผนกวิชาคอมพิวเตอร์ธุรกิจ") {
+    if (selecteddeparment == "แผนกวิชาคอมพิวเตอร์ธุรกิจ") {
       iddeparment = 1;
-    } else if (namedeparment == "แผนกวิชาการบัญชี") {
+    } else if (selecteddeparment == "แผนกวิชาการบัญชี") {
       iddeparment = 2;
-    } else if (namedeparment == "แผนกวิชาช่างซ่อมบำรุง") {
+    } else if (selecteddeparment == "แผนกวิชาช่างซ่อมบำรุง") {
       iddeparment = 3;
-    } else if (namedeparment == "แผนกวิชาธุรกิจค้าปลีก") {
+    } else if (selecteddeparment == "แผนกวิชาธุรกิจค้าปลีก") {
       iddeparment = 4;
-    } else if (namedeparment == "แผนกวิชาช่างยนต์") {
+    } else if (selecteddeparment == "แผนกวิชาช่างยนต์") {
       iddeparment = 5;
-    } else if (namedeparment == "แผนกวิชาช่างไฟฟ้ากำลัง") {
+    } else if (selecteddeparment == "แผนกวิชาช่างไฟฟ้ากำลัง") {
       iddeparment = 6;
-    } else if (namedeparment == "แผนกวิชาช่างอิเล็กทรอนิกส์") {
+    } else if (selecteddeparment == "แผนกวิชาช่างอิเล็กทรอนิกส์") {
       iddeparment = 7;
     }
-    var _obj = {
+    var obj = {
       'prefix': currentSelectedprefix,
       'firstname': firstname.text.trim(),
       'lastname': lastname.text.trim(),
       'username': username.text.trim(),
       'password': password.text.trim(),
-      'deparmentID': (iddeparment).toString(),
+      'deparmentID': iddeparment,
     };
-    print(_obj);
+    var _obj = jsonEncode(obj);
     try {
-      var res =
-          await client.post('$api/server/user/signup-teacher', body: _obj);
+      var res = await http.post('$api/server/user/signup-teacher',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: _obj);
       var data = json.decode(res.body);
       if (data['status'] == true) {
         EdgeAlert.show(context,
@@ -118,28 +120,30 @@ class _AddAccountingState extends State<AddAccounting> {
             gravity: EdgeAlert.TOP,
             backgroundColor: Colors.green,
             icon: Icons.check_circle_outline);
-        // Future.delayed(new Duration(milliseconds: 800), () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MainAdminPage()),
-        );
-        // });
+        pushRemove(context, MainAdminPage());
       }
       return data;
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'ERROR',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
 
   Future apiCkeckAccount() async {
-    var client = http.Client();
     try {
-      var _obj = {
+      var obj = {
         'firstname': firstname.text.trim(),
         'username': username.text.trim(),
       };
-      print(_obj);
-      var res = await client.post('$api/server/user/check-login', body: _obj);
+      var _obj = jsonEncode(obj);
+      var res = await http.post('$api/server/user/check-login',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: _obj);
       var data = json.decode(res.body);
       if (data["status"] == true) {
         apiAdduser();
@@ -151,8 +155,12 @@ class _AddAccountingState extends State<AddAccounting> {
             gravity: EdgeAlert.TOP,
             backgroundColor: Colors.red);
       }
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'กรุณาลองใหม่',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
 
@@ -171,19 +179,18 @@ class _AddAccountingState extends State<AddAccounting> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 icon: Icon(Icons.arrow_drop_down, color: indexColor),
-                hint: Text("คำนำหน้าชื่อ"),
+                hint: Text("คำนำหน้าชื่อ", style: hintStyle),
                 value: currentSelectedprefix,
                 isDense: true,
                 onChanged: (newValue) {
                   setState(() {
                     currentSelectedprefix = newValue;
                   });
-                  print(currentSelectedprefix);
                 },
                 items: _prefixGD.map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(value, style: hintStyle),
                   );
                 }).toList(),
               ),
@@ -203,7 +210,11 @@ class _AddAccountingState extends State<AddAccounting> {
         child: Text(
           'บันทึกข้อมูล',
           style: TextStyle(
-              fontSize: 20.0, color: Colors.white, fontWeight: FontWeight.w700),
+            fontSize: 20.0,
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'Mali',
+          ),
         ),
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
@@ -239,19 +250,18 @@ class _AddAccountingState extends State<AddAccounting> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 icon: Icon(Icons.arrow_drop_down),
-                hint: Text("กรุณาเลือกแผนก"),
+                hint: Text("กรุณาเลือกแผนก", style: hintStyle),
                 value: selecteddeparment,
                 isDense: true,
                 onChanged: (newValue) {
                   setState(() {
                     selecteddeparment = newValue;
                   });
-                  print(selecteddeparment);
                 },
                 items: _deparment.map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(value, style: hintStyle),
                   );
                 }).toList(),
               ),
@@ -267,10 +277,12 @@ class _AddAccountingState extends State<AddAccounting> {
     return Container(
       padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
       child: TextFormField(
+        style: hintStyle,
         obscureText: obscure,
         controller: controller,
         keyboardType: type,
         decoration: InputDecoration(
+          labelStyle: hintStyle,
           labelText: labelText,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -297,17 +309,17 @@ class _AddAccountingState extends State<AddAccounting> {
           Text(
             '*',
             style: TextStyle(
-              color: Colors.red,
-              fontSize: 26.0,
-              fontWeight: FontWeight.bold,
-            ),
+                color: Colors.red,
+                fontSize: 26.0,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Mali'),
           ),
           Text(
             'เพิ่มบัญชีผู้ใช้',
             style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Mali'),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:KABINBURI/model/user_model.dart';
+import 'package:edge_alert/edge_alert.dart';
 import 'package:http/http.dart' as http;
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
@@ -23,6 +24,7 @@ class _ListAccountingState extends State<ListAccounting> {
   bool isLoading = true;
   int top = 10;
   var account;
+
   @override
   void initState() {
     super.initState();
@@ -30,14 +32,18 @@ class _ListAccountingState extends State<ListAccounting> {
   }
 
   Future apilistAccount() async {
-    var client = http.Client();
     try {
       var _url = '$api/server/user/list-users';
-      var _obj = {
-        "top": (top).toString(),
+      var obj = {
+        "top": top,
         "firstnameSTD": searchname.text.trim(),
       };
-      var response = await client.post(_url, body: _obj);
+      var _obj = jsonEncode(obj);
+      var response = await http.post(_url,
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: _obj);
       var res = json.decode(response.body);
       if (res["status"] == true) {
         account = res["result"].map((i) => User.fromJson(i)).toList();
@@ -45,19 +51,27 @@ class _ListAccountingState extends State<ListAccounting> {
           isLoading = false;
         });
       }
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'กรุณาลองใหม่',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
 
   Future apideleteAccount(var userId) async {
-    var client = http.Client();
     try {
       var _url = '$api/server/user/delete-user';
-      var _obj = {
+      var obj = {
         "id": (userId).toString(),
       };
-      var response = await client.post(_url, body: _obj);
+      var _obj = jsonEncode(obj);
+      var response = await http.post(_url,
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: _obj);
       var res = json.decode(response.body);
       if (res["status"] == true) {
         SweetAlert.show(
@@ -69,8 +83,12 @@ class _ListAccountingState extends State<ListAccounting> {
           apilistAccount();
         });
       }
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'กรุณาลองใหม่',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
 
@@ -101,7 +119,7 @@ class _ListAccountingState extends State<ListAccounting> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('List Account'),
+        title: Text('List Account', style: hintStyle),
         leading: IconButton(
           color: Colors.black,
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -121,15 +139,15 @@ class _ListAccountingState extends State<ListAccounting> {
                   builder: (BuildContext context, LoadStatus mode) {
                     Widget body;
                     if (mode == LoadStatus.idle) {
-                      body = Text("pull up load");
+                      body = Text("pull up load", style: hintStyle);
                     } else if (mode == LoadStatus.loading) {
                       body = CupertinoActivityIndicator();
                     } else if (mode == LoadStatus.failed) {
-                      body = Text("Load Failed!Click retry!");
+                      body = Text("Load Failed!Click retry!", style: hintStyle);
                     } else if (mode == LoadStatus.canLoading) {
-                      body = Text("release to load more");
+                      body = Text("release to load more", style: hintStyle);
                     } else {
-                      body = Text("No more Data");
+                      body = Text("No more Data", style: hintStyle);
                     }
                     return Container(
                       height: 55.0,
@@ -150,74 +168,76 @@ class _ListAccountingState extends State<ListAccounting> {
   }
 
   Widget showItem() {
-    return ListView.builder(
-      itemCount: account.length,
-      itemBuilder: (context, i) => Container(
-        padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
-        child: Card(
-          elevation: 3.0,
-          child: ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Row(
-              children: [
-                Text(account[i].firstname, style: textlist),
-                SizedBox(width: 10.0),
-                Text(account[i].lastname, style: textlist)
-              ],
-            ),
-            subtitle: Container(
-              margin: EdgeInsets.only(top: 5.0),
-              child: Row(
-                children: [
-                  Text("แผนกวิชา  ${account[i].deparmentName}",
-                      style: textlistsub),
-                ],
-              ),
-            ),
-            trailing: Container(
-              margin: EdgeInsets.only(right: 10.0),
-              child: IconButton(
-                icon: Icon(Icons.more_vert, size: 35.0),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => Container(
-                      child: Wrap(
-                        children: <Widget>[
-                          ListTile(
-                            leading: Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                            title: Text('ลบข้อมูล'),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              SweetAlert.show(context,
-                                  title: "คุณต้องการลบข้อมูล",
-                                  subtitle:
-                                      "คุณ  ${account[i].firstname}  แผนก${account[i].deparmentName}   หรือไม่ ?",
-                                  style: SweetAlertStyle.confirm,
-                                  showCancelButton: true,
-                                  // ignore: missing_return
-                                  onPress: (bool isConfirm) {
-                                if (isConfirm) {
-                                  apideleteAccount(account[i].userId);
-                                  return false;
-                                }
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+    return account.length == null
+        ? notedata()
+        : ListView.builder(
+            itemCount: account.length,
+            itemBuilder: (context, i) => Container(
+              padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
+              child: Card(
+                elevation: 3.0,
+                child: ListTile(
+                  leading: Icon(Icons.account_circle),
+                  title: Row(
+                    children: [
+                      Text(account[i].firstname, style: textlist),
+                      SizedBox(width: 10.0),
+                      Text(account[i].lastname, style: textlist)
+                    ],
+                  ),
+                  subtitle: Container(
+                    margin: EdgeInsets.only(top: 5.0),
+                    child: Row(
+                      children: [
+                        Text("แผนกวิชา  ${account[i].deparmentName}",
+                            style: textlistsub),
+                      ],
                     ),
-                  );
-                },
+                  ),
+                  trailing: Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: IconButton(
+                      icon: Icon(Icons.more_vert, size: 35.0),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => Container(
+                            child: Wrap(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  title: Text('ลบข้อมูล', style: hintStyle),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    SweetAlert.show(context,
+                                        title: "คุณต้องการลบข้อมูล",
+                                        subtitle:
+                                            "คุณ  ${account[i].firstname}  แผนก${account[i].deparmentName}   หรือไม่ ?",
+                                        style: SweetAlertStyle.confirm,
+                                        showCancelButton: true,
+                                        // ignore: missing_return
+                                        onPress: (bool isConfirm) {
+                                      if (isConfirm) {
+                                        apideleteAccount(account[i].userId);
+                                        return false;
+                                      }
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 
   Widget tabSearch() {
@@ -233,10 +253,11 @@ class _ListAccountingState extends State<ListAccounting> {
                 apilistAccount();
               });
             },
-            style: TextStyle(fontSize: 18.0),
+            style: TextStyle(fontSize: 18.0, fontFamily: 'Mali'),
             controller: searchname,
             decoration: InputDecoration(
               hintText: 'ชื่อบัญชีผู้ใช้',
+              hintStyle: hintStyle,
               border: InputBorder.none,
             ),
           ),

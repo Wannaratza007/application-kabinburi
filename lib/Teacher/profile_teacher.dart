@@ -32,7 +32,7 @@ class _ProfileTeacherState extends State<ProfileTeacher> {
       setState(() {
         firstnameuser = preferences.getString('firstname');
         lastnameuser = preferences.getString('lastname');
-        departmentuser = "แผนกวิชา" +preferences.getString('deparment');
+        departmentuser = "แผนกวิชา" + preferences.getString('deparment');
       });
     }
   }
@@ -59,48 +59,31 @@ class _ProfileTeacherState extends State<ProfileTeacher> {
                       children: <Widget>[
                         Text(
                           firstnameuser == null ? 'GUEST' : firstnameuser,
-                          style: TextStyle(fontSize: 15.0),
+                          style: TextStyle(fontSize: 15.0, fontFamily: 'Mali'),
                         ),
                         SizedBox(width: 15.0),
                         Text(
                           lastnameuser == null ? '' : lastnameuser,
-                          style: TextStyle(fontSize: 15.0),
+                          style: TextStyle(fontSize: 15.0, fontFamily: 'Mali'),
                         ),
                       ],
                     ),
                     SizedBox(height: 3.0),
-                    Text((departmentuser != null) ? departmentuser : ''),
+                    Text((departmentuser != null) ? departmentuser : '',
+                        style: hintStyle),
                   ],
                 ),
               ),
             ),
-            // ListTile(
-            //   leading: Icon(Icons.apps),
-            //   trailing: Icon(Icons.arrow_forward_ios),
-            //   title: Text('เพิ่มข่าวสาร', style: TextStyle(fontSize: 18.0)),
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => NewMessagesPage()),
-            //     );
-            //   },
-            // ),
-            // ListTile(
-            //   leading: Icon(Icons.apps),
-            //   trailing: Icon(Icons.arrow_forward_ios),
-            //   title: Text('เพิ่มกิจกรรม', style: TextStyle(fontSize: 18.0)),
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => NewCommunotyPage()),
-            //     );
-            //   },
-            // ),
             ListTile(
               leading: Icon(Icons.exit_to_app, color: Colors.red),
               title: Text(
                 'ออกจากระบบ',
-                style: TextStyle(fontSize: 18.0, color: Colors.red),
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.red,
+                  fontFamily: 'Mali',
+                ),
               ),
               onTap: () {
                 SweetAlert.show(context,

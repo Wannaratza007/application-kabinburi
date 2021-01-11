@@ -59,7 +59,7 @@ class _LoadAppPageState extends State<LoadAppPage> {
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'OpenSans',
+                  fontFamily: 'Mali',
                 ),
               ),
             ),

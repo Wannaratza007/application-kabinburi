@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:KABINBURI/Administrator/main_Admin.dart';
 import 'package:KABINBURI/Teacher/main_Teacher.dart';
 import 'package:KABINBURI/model/user_model.dart';
-import 'package:KABINBURI/sign_up.dart';
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:KABINBURI/style/singout.dart';
@@ -11,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class SignInPage extends StatefulWidget {
   SignInPage({Key key}) : super(key: key);
@@ -25,15 +25,24 @@ class _SignInPageState extends State<SignInPage> {
   final password = TextEditingController();
   bool islogin = false;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Future checkLogin() async {
-    var client = http.Client();
     print('username : ' + '  ' + username.text.trim());
     print('password : ' + '  ' + password.text.trim());
     var user = username.text.trim();
     var pass = password.text.trim();
     try {
-      var _obj = {'username': user, 'password': pass.toString()};
-      var response = await client.post('$api/server/user/login', body: _obj);
+      var obj = {'username': user, 'password': pass.toString()};
+      var _obj = jsonEncode(obj);
+      var response = await http.post('$api/server/user/login',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: _obj);
       var result = json.decode(response.body);
       if (result['status'] == true) {
         for (var i in result["result"]) {
@@ -49,6 +58,7 @@ class _SignInPageState extends State<SignInPage> {
           pfn.setString('deparment', usermodel.deparmentName);
           if (status == 'admin') {
             print('Administrator');
+            Navigator.of(context).pop();
             pushRemove(context, MainAdminPage());
             setState(() {
               islogin = false;
@@ -59,8 +69,9 @@ class _SignInPageState extends State<SignInPage> {
               islogin = false;
               username.text = password.text = '';
             });
-            pushRemove(context, MainTeacherPage());
             print('Teacher');
+            Navigator.of(context).pop();
+            pushRemove(context, MainTeacherPage());
           } else {
             EdgeAlert.show(context,
                 title: 'ERROR',
@@ -79,10 +90,15 @@ class _SignInPageState extends State<SignInPage> {
           islogin = false;
         });
       }
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'ERROR',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -127,16 +143,14 @@ class _SignInPageState extends State<SignInPage> {
                           'Sign In',
                           style: TextStyle(
                             color: Colors.white,
-                            fontFamily: 'OpenSans',
+                            fontFamily: 'Mali',
                             fontSize: 50.0,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(height: 30.0),
                         _buildEmailTF(),
-                        SizedBox(
-                          height: 30.0,
-                        ),
+                        SizedBox(height: 30.0),
                         _buildPasswordTF(),
                         _buildSignInWithText(),
                         _buildLoginBtn(),
@@ -172,7 +186,7 @@ class _SignInPageState extends State<SignInPage> {
             keyboardType: TextInputType.text,
             style: TextStyle(
               color: Colors.white,
-              fontFamily: 'OpenSans',
+              fontFamily: 'Mali',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -214,7 +228,7 @@ class _SignInPageState extends State<SignInPage> {
             obscureText: true,
             style: TextStyle(
               color: Colors.white,
-              fontFamily: 'OpenSans',
+              fontFamily: 'Mali',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -256,12 +270,12 @@ class _SignInPageState extends State<SignInPage> {
             letterSpacing: 1.5,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
-            fontFamily: 'OpenSans',
+            fontFamily: 'Mali',
           ),
         ),
         onPressed: () {
-          print("islogin");
-          print(islogin);
+          SweetAlert.show(context,
+              subtitle: "loading...", style: SweetAlertStyle.loading);
           islogin == true
               ? EdgeAlert.show(context,
                   title: 'กรุณารอสักครู่ค่ะ...',
@@ -283,39 +297,6 @@ class _SignInPageState extends State<SignInPage> {
       children: <Widget>[
         SizedBox(height: 20.0),
       ],
-    );
-  }
-
-  // ignore: unused_element
-  Widget _buildSignupBtn() {
-    return GestureDetector(
-      onTap: () {
-        hidekeyboard();
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUpPage()));
-      },
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: 'Don\'t have an Account? ',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            TextSpan(
-              text: 'Sign Up',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

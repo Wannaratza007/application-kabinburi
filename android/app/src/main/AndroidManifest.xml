@@ -13,7 +13,13 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="KABINBURI"
         android:icon="@mipmap/ic_launcher">
-        
+        <!-- GOOGLE -->
+        <!-- <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCDTAD0zeMHZrtdBXrGh8WNPKD3rHfEKA0"/> -->
+
+        <!-- LONGDO -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="10e9d24fdd36aa77b71183a5422e4d48"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -36,8 +42,7 @@
                  Flutter's first frame. -->
             <meta-data
               android:name="io.flutter.embedding.android.SplashScreenDrawable"
-              android:resource="@drawable/launch_background"
-              />
+              android:resource="@drawable/launch_background"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -41,22 +41,40 @@ Widget progress() {
   );
 }
 
-var textlist = TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500);
-var textlistsub = TextStyle(fontSize: 15.0, fontWeight: FontWeight.w400);
+Widget notedata() {
+  return Center(
+    child: Container(
+      child: Text(
+        'ไม่พบข้อมูล',
+        style: TextStyle(
+            fontSize: 50.0,
+            fontWeight: FontWeight.w900,
+            color: mainColor,
+            fontFamily: 'Mali'),
+      ),
+    ),
+  );
+}
 
+var textlist =
+    TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500, fontFamily: 'Mali');
+var textlistsub =
+    TextStyle(fontSize: 15.0, fontWeight: FontWeight.w400, fontFamily: 'Mali');
 
-var testlist = TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500);
-var testlistsub = TextStyle(fontSize: 15.0, fontWeight: FontWeight.w400);
+var style =
+    TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, fontFamily: 'Mali');
+
+var hintStyle = TextStyle(fontFamily: 'Mali');
 
 final kHintTextStyle = TextStyle(
   color: Colors.white54,
-  fontFamily: 'OpenSans',
+  fontFamily: 'Mali',
 );
 
 final kLabelStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.bold,
-  fontFamily: 'OpenSans',
+  fontFamily: 'Mali',
 );
 
 final kBoxDecorationStyle = BoxDecoration(

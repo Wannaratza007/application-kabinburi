@@ -51,18 +51,22 @@ class _MainAdminPageState extends State<MainAdminPage> {
         showUnselectedLabels: false,
         items: [
           BottomNavigationBarItem(
+            // ignore: deprecated_member_use
             title: Text(''),
             icon: Icon(Icons.home, size: 30),
           ),
           BottomNavigationBarItem(
+            // ignore: deprecated_member_use
             title: Text(''),
             icon: Icon(Icons.person_add, size: 30),
           ),
           BottomNavigationBarItem(
+            // ignore: deprecated_member_use
             title: Text(''),
             icon: Icon(Icons.folder_shared, size: 30),
           ),
           BottomNavigationBarItem(
+            // ignore: deprecated_member_use
             title: Text(''),
             icon: Icon(Icons.list, size: 30),
           ),

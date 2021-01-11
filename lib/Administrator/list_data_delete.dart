@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:KABINBURI/model/student_model.dart';
 import 'package:KABINBURI/style/connect_api.dart';
+import 'package:edge_alert/edge_alert.dart';
 import 'package:http/http.dart' as http;
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,14 +32,20 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
   }
 
   Future apiSetData() async {
-    var client = http.Client();
     try {
       var _url = '$api/server/student/get-student-delete';
-      var _obj = {
-        "top": (top).toString(),
+      var obj = {
+        "top": top,
         "firstnameSTD": searchname.text.trim(),
       };
-      var response = await client.post(_url, body: _obj);
+      var _obj = jsonEncode(obj);
+      var response = await http.post(
+        _url,
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: _obj,
+      );
       var res = json.decode(response.body);
       if (res["status"] == true) {
         students = res["result"].map((i) => Student.fromJson(i)).toList();
@@ -46,16 +53,17 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
           isLoading = false;
         });
       }
-
       return true;
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'กรุณาลองใหม่',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
 
   Future apitrailing(String type, int id) async {
-    print(id);
-    var client = http.Client();
     try {
       var url;
       if (type == 'reuse') {
@@ -64,7 +72,15 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
         url = 'delete-student';
       }
       var _url = '$api/server/student/$url';
-      var response = await client.post(_url, body: {"id": "$id"});
+      var obj = {"id": "$id"};
+      var _obj = jsonEncode(obj);
+      var response = await http.post(
+        _url,
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: _obj,
+      );
       var result = json.decode(response.body);
       if (result['status'] == true) {
         SweetAlert.show(
@@ -76,8 +92,12 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
           apiSetData();
         });
       }
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'กรุณาลองใหม่',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
 
@@ -118,15 +138,15 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
                   builder: (BuildContext context, LoadStatus mode) {
                     Widget body;
                     if (mode == LoadStatus.idle) {
-                      body = Text("pull up load");
+                      body = Text("pull up load", style: hintStyle);
                     } else if (mode == LoadStatus.loading) {
                       body = CupertinoActivityIndicator();
                     } else if (mode == LoadStatus.failed) {
-                      body = Text("Load Failed!Click retry!");
+                      body = Text("Load Failed!Click retry!", style: hintStyle);
                     } else if (mode == LoadStatus.canLoading) {
-                      body = Text("release to load more");
+                      body = Text("release to load more", style: hintStyle);
                     } else {
-                      body = Text("No more Data");
+                      body = Text("No more Data", style: hintStyle);
                     }
                     return Container(
                       height: 55.0,
@@ -137,10 +157,7 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 onLoading: _onLoading,
-                child: isLoading == true
-                    ? progress()
-                    // : (students.length == 0 ? notedata() : showItem()),
-                    : showItem(),
+                child: isLoading == true ? progress() : showItem(),
               ),
             ),
           ),
@@ -149,96 +166,83 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
     );
   }
 
-  Widget notedata() {
-    return Center(
-      child: Container(
-        child: Text(
-          'ไม่พบข้อมูล',
-          style: TextStyle(
-            fontSize: 50.0,
-            fontWeight: FontWeight.w900,
-            color: mainColor,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget showItem() {
-    return ListView.builder(
+    return 
+    students.length == null ?
+    notedata() :
+    ListView.builder(
       itemCount: students.length,
       itemBuilder: (context, i) => Container(
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
         child: Card(
           elevation: 3.0,
           child: ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Row(
-              children: [
-                Text(students[i].firstnameStd, style: textlist),
-                SizedBox(width: 10.0),
-                Text(students[i].lastnameStd, style: textlist)
-              ],
-            ),
-            subtitle: Container(
-              margin: EdgeInsets.only(top: 5.0),
-              child: Row(
+              leading: Icon(Icons.account_circle),
+              title: Row(
                 children: [
-                  Text("${students[i].studygroup}", style: textlistsub),
+                  Text(students[i].firstnameStd, style: textlist),
                   SizedBox(width: 10.0),
-                  Text("แผนก${students[i].deparmentName}", style: textlistsub),
+                  Text(students[i].lastnameStd, style: textlist)
                 ],
               ),
-            ),
-            trailing: Container(
-              margin: EdgeInsets.only(right: 10.0),
-              child: IconButton(
-                icon: Icon(Icons.more_vert, size: 35.0),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => Container(
-                      child: Wrap(
-                        children: <Widget>[
-                          ListTile(
-                            leading: new Icon(Icons.loop),
-                            title: new Text('กู้ข้อมูลนักศึกษา'),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              apitrailing('reuse', students[i].student);
-                            },
-                          ),
-                          ListTile(
-                            leading: Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                            title: Text('ลบข้อมูล'),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              SweetAlert.show(context,
-                                  title: "คุณต้องการลบข้อมูล",
-                                  subtitle:
-                                      "${students[i].prefixStd} ${students[i].firstnameStd}   ${students[i].lastnameStd}   หรือไม่ ?",
-                                  style: SweetAlertStyle.confirm,
-                                  showCancelButton: true,
-                                  // ignore: missing_return
-                                  onPress: (bool isConfirm) {
-                                if (isConfirm) {
-                                  apitrailing('delete', students[i].student);
-                                  return false;
-                                }
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+              subtitle: Container(
+                margin: EdgeInsets.only(top: 5.0),
+                child: Row(
+                  children: [
+                    Text("${students[i].studygroup}", style: textlistsub),
+                    SizedBox(width: 10.0),
+                    Text("แผนก${students[i].deparmentName}",
+                        style: textlistsub),
+                  ],
+                ),
               ),
-            ),
-          ),
+              trailing: Container(
+                margin: EdgeInsets.only(right: 10.0),
+                child: Icon(Icons.more_vert, size: 35.0),
+              ),
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => Container(
+                    child: Wrap(
+                      children: <Widget>[
+                        ListTile(
+                          leading: new Icon(Icons.loop),
+                          title:
+                              new Text('กู้ข้อมูลนักศึกษา', style: hintStyle),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            apitrailing('reuse', students[i].student);
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          title: Text('ลบข้อมูล', style: hintStyle),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            SweetAlert.show(context,
+                                title: "คุณต้องการลบข้อมูล",
+                                subtitle:
+                                    "${students[i].prefixStd} ${students[i].firstnameStd}   ${students[i].lastnameStd}   หรือไม่ ?",
+                                style: SweetAlertStyle.confirm,
+                                showCancelButton: true,
+                                // ignore: missing_return
+                                onPress: (bool isConfirm) {
+                              if (isConfirm) {
+                                apitrailing('delete', students[i].student);
+                                return false;
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
         ),
       ),
     );
@@ -257,10 +261,11 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
                 apiSetData();
               });
             },
-            style: TextStyle(fontSize: 18.0),
+            style: TextStyle(fontSize: 18.0, fontFamily: 'Mali'),
             controller: searchname,
             decoration: InputDecoration(
               hintText: 'ชื่อนักเรียน  นักศึกษา',
+              hintStyle: hintStyle,
               border: InputBorder.none,
             ),
           ),

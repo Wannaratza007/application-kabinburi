@@ -56,12 +56,12 @@ class _ProflieAdminState extends State<ProflieAdmin> {
                           firstnameuser == null
                               ? 'Administrator'
                               : firstnameuser,
-                          style: TextStyle(fontSize: 18.0),
+                          style: TextStyle(fontSize: 18.0, fontFamily: 'Mali'),
                         ),
                         SizedBox(width: 15.0),
                         Text(
                           lastnameuser == null ? '' : lastnameuser,
-                          style: TextStyle(fontSize: 18.0),
+                          style: TextStyle(fontSize: 18.0, fontFamily: 'Mali'),
                         ),
                       ],
                     ),
@@ -72,7 +72,8 @@ class _ProflieAdminState extends State<ProflieAdmin> {
             ListTile(
               leading: Icon(Icons.apps),
               trailing: Icon(Icons.arrow_forward_ios),
-              title: Text('จัดการบัญชี', style: TextStyle(fontSize: 18.0)),
+              title: Text('จัดการบัญชี',
+                  style: TextStyle(fontSize: 18.0, fontFamily: 'Mali')),
               onTap: () {
                 Navigator.push(
                   context,
@@ -84,7 +85,8 @@ class _ProflieAdminState extends State<ProflieAdmin> {
               leading: Icon(Icons.exit_to_app, color: Colors.red),
               title: Text(
                 'ออกจากระบบ',
-                style: TextStyle(fontSize: 18.0, color: Colors.red),
+                style: TextStyle(
+                    fontSize: 18.0, color: Colors.red, fontFamily: 'Mali'),
               ),
               onTap: () {
                 SweetAlert.show(context,

@@ -1,25 +1,29 @@
 import 'dart:convert';
-import 'package:KABINBURI/Teacher/main_Teacher.dart';
-import 'package:KABINBURI/style/singout.dart';
-import 'package:edge_alert/edge_alert.dart';
-import 'package:http/http.dart' as http;
+
+import 'package:KABINBURI/model/student_model.dart';
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
+import 'package:KABINBURI/style/singout.dart';
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
+import 'package:http/http.dart' as http;
+import 'main_Teacher.dart';
 
-class AddNewStudent extends StatefulWidget {
-  AddNewStudent({Key key}) : super(key: key);
+// ignore: must_be_immutable
+class EditDataStudent extends StatefulWidget {
+  Student data;
+  EditDataStudent({Key key, this.data}) : super(key: key);
 
   @override
-  _AddNewStudentState createState() => _AddNewStudentState();
+  _EditDataStudentState createState() => _EditDataStudentState();
 }
 
-class _AddNewStudentState extends State<AddNewStudent> {
+class _EditDataStudentState extends State<EditDataStudent> {
   final _formKey = GlobalKey<FormState>();
-  var firstnameuser, lastnameuser, deparmentID, deparmentName;
+
+  var item, grade, year;
 
   var idSTD = TextEditingController();
   var firstnameSTD = TextEditingController();
@@ -43,6 +47,7 @@ class _AddNewStudentState extends State<AddNewStudent> {
   dynamic province;
   dynamic amphures;
   dynamic districts;
+
   dynamic listprovince;
   dynamic listamphures;
   dynamic listdistricts;
@@ -50,14 +55,13 @@ class _AddNewStudentState extends State<AddNewStudent> {
   String selectedValueprovince;
   String selectedValueamphures;
   String selectedValuedistricts;
+  String currentSelectedprefixSTD;
+  String currentSelectedprefixGD;
+  String currentSelectedgrade1;
+  String currentSelectedgrade2;
+  String currentSelectedgrade3;
 
   bool issaved = true;
-
-  var currentSelectedprefixSTD;
-  var currentSelectedprefixGD;
-  var currentSelectedgrade1;
-  var currentSelectedgrade2;
-  var currentSelectedgrade3;
 
   final _grade1 = ["ปวช.", "ปวส."];
   final _grade2 = ["1", "2", "3"];
@@ -67,30 +71,43 @@ class _AddNewStudentState extends State<AddNewStudent> {
   @override
   void initState() {
     super.initState();
-    finduser();
+    setData();
     apiqgetprovince();
   }
 
-  Future finduser() async {
-    var pfs = await SharedPreferences.getInstance();
+  Future setData() async {
     setState(() {
-      firstnameuser = pfs.getString('firstname');
-      lastnameuser = pfs.getString('lastname');
-      deparmentID = pfs.getInt('deparmentID');
-      deparmentName = pfs.getString('deparment');
-      userdeparment.text = 'แผนกวิชา  ' + deparmentName;
+      userdeparment.text = 'แผนกวิชา  ' + widget.data.deparmentName;
+      firstnameSTD.text = widget.data.firstnameStd;
+      lastnameSTD.text = widget.data.lastnameStd;
+      firstnameGD.text = widget.data.firstnameGd;
+      numbersHome.text = widget.data.numberHomes;
+      lastnameGD.text = widget.data.lastnameGd;
+      phoneSTD.text = widget.data.phonesStd;
+      phoneGD.text = widget.data.phonesGd;
+      villages.text = widget.data.village;
+      province = widget.data.province;
+      alley.text = widget.data.alley;
+      road.text = widget.data.road;
+      var group = widget.data.studygroup;
+      item = group.split(".");
+      grade = item[0];
+      year = item[1].split('/');
+      print(grade);
+      print(year[0]);
+      print(year[1]);
+      selectedValueprovince = grade;
+      print("selectedValueprovince  = " + selectedValueprovince);
     });
   }
 
-  Future apiAddstudent() async {
-    SweetAlert.show(context,
-        subtitle: "Saveing...", style: SweetAlertStyle.loading);
+  Future apiUpdatastudent() async {
     var grades = currentSelectedgrade1 +
         currentSelectedgrade2 +
         '/' +
         currentSelectedgrade3;
     var obj = {
-      "deparmentID": (deparmentID).toString(),
+      "id": widget.data.student,
       "codeSTD": idSTD.text.trim(),
       "prefixSTD": currentSelectedprefixSTD,
       "firstNameSTD": firstnameSTD.text.trim(),
@@ -114,7 +131,7 @@ class _AddNewStudentState extends State<AddNewStudent> {
     var _obj = jsonEncode(obj);
     try {
       var res = await http.post(
-        '$api/server/student/add-student',
+        '$api/server/student/update-student',
         headers: {
           'content-type': 'application/json',
         },
@@ -253,6 +270,13 @@ class _AddNewStudentState extends State<AddNewStudent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          color: Colors.black,
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(5.0),
@@ -356,25 +380,26 @@ class _AddNewStudentState extends State<AddNewStudent> {
 
   Widget searchItemsprovince() {
     return SearchableDropdown.single(
+      displayClearIcon: false,
       items: itemsListprovince,
       value: selectedValueprovince,
       label: Container(
-          child: Text(
-        "จังหวัด",
-        style: TextStyle(
-            fontSize: 16, color: Colors.grey[700], fontFamily: 'Mali'),
-      )),
+        child: Text(
+          "จังหวัด",
+          style: TextStyle(
+              fontSize: 16, color: Colors.grey[700], fontFamily: 'Mali'),
+        ),
+      ),
       hint: Text(
         "กรุณาเลือก จังหวัด",
         style: TextStyle(color: Colors.red, fontFamily: 'Mali'),
       ),
       searchHint: "Select Province",
-      onChanged: (value) {
+      onChanged: (valueprovince) {
         setState(() {
-          if (value != null) {
-            province = value;
+          if (valueprovince != null) {
+            province = valueprovince;
             apiqgetamphures();
-          } else {
             itemsListamphures = [];
             itemsListdistricts = [];
             amphures.clear();
@@ -402,12 +427,12 @@ class _AddNewStudentState extends State<AddNewStudent> {
         style: TextStyle(color: Colors.red, fontFamily: 'Mali'),
       ),
       searchHint: "Select Amphures",
+      displayClearIcon: false,
       onChanged: (value) {
         setState(() {
           if (value != null) {
             amphures = value;
             apiqgetdistricts();
-          } else {
             itemsListdistricts = [];
             districts.clear();
           }
@@ -433,6 +458,7 @@ class _AddNewStudentState extends State<AddNewStudent> {
         style: TextStyle(color: Colors.red, fontFamily: 'Mali'),
       ),
       searchHint: "Select Districts",
+      displayClearIcon: false,
       onChanged: (value) {
         setState(() {
           if (value != null) {
@@ -465,7 +491,9 @@ class _AddNewStudentState extends State<AddNewStudent> {
         onPressed: () {
           if (_formKey.currentState.validate()) {
             if (issaved) {
-              apiAddstudent();
+              SweetAlert.show(context,
+                  subtitle: "Saveing...", style: SweetAlertStyle.loading);
+              apiUpdatastudent();
               hidekeyboard();
               setState(() {
                 issaved = false;
@@ -602,7 +630,6 @@ class _AddNewStudentState extends State<AddNewStudent> {
                       child: DropdownButton<String>(
                         icon: Icon(Icons.arrow_drop_down, color: indexColor),
                         hint: Text("ระดับ", style: hintStyle),
-                        // style: hintStyle,
                         value: currentSelectedgrade1,
                         isDense: true,
                         onChanged: (newValue) {
@@ -821,5 +848,4 @@ class _AddNewStudentState extends State<AddNewStudent> {
       ),
     );
   }
-
 }

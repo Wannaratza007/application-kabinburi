@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:KABINBURI/style/contsan.dart';
 import 'package:http/http.dart' as http;
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:flutter/material.dart';
@@ -23,24 +24,37 @@ class AdminT extends StatefulWidget {
 }
 
 class _AdminTState extends State<AdminT> {
-  var style = TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
   static final DateTime now = DateTime.now();
   static final DateFormat formatter = DateFormat('dd-MM-yyyy');
   final String formatted = formatter.format(now);
 
+  // ignore: non_constant_identifier_names
   dynamic computer_n = 0;
+  // ignore: non_constant_identifier_names
   dynamic computer_v = 0;
+  // ignore: non_constant_identifier_names
   dynamic accounting_n = 0;
+  // ignore: non_constant_identifier_names
   dynamic accounting_v = 0;
+  // ignore: non_constant_identifier_names
   dynamic maintenance_n = 0;
+  // ignore: non_constant_identifier_names
   dynamic maintenance_v = 0;
+  // ignore: non_constant_identifier_names
   dynamic retail_n = 0;
+  // ignore: non_constant_identifier_names
   dynamic retail_v = 0;
+  // ignore: non_constant_identifier_names
   dynamic mechanic_n = 0;
+  // ignore: non_constant_identifier_names
   dynamic mechanic_v = 0;
+  // ignore: non_constant_identifier_names
   dynamic electrician_n = 0;
+  // ignore: non_constant_identifier_names
   dynamic electrician_v = 0;
+  // ignore: non_constant_identifier_names
   dynamic electronic_n = 0;
+  // ignore: non_constant_identifier_names
   dynamic electronic_v = 0;
 
   @override
@@ -50,8 +64,12 @@ class _AdminTState extends State<AdminT> {
   }
 
   Future getdata() async {
-    var client = http.Client();
-    var res = await client.post('$api/server/dashboard/admin');
+    var res = await http.post(
+      '$api/server/dashboard/admin',
+      headers: {
+        'content-type': 'application/json',
+      },
+    );
     var result = json.decode(res.body);
     var status = result["status"];
     var results = result["result"];
@@ -80,54 +98,80 @@ class _AdminTState extends State<AdminT> {
     dynamic device = MediaQuery.of(context);
 
     var datacom = [
-      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n  แผนกวิชาคอมพิวเตอร์ธุรกิจ',
-          computer_n, Colors.grey),
-      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n  แผนกวิชาคอมพิวเตอร์ธุรกิจ',
-          computer_v, Colors.blue),
+      new ClicksPerYear(
+          '\n  คอมพิวเตอร์ธุรกิจ \n\n จำนวน $computer_n คน \n\n ยังไม่เยี่ยมบ้าน',
+          computer_n,
+          Colors.grey),
+      new ClicksPerYear(
+          '\n  คอมพิวเตอร์ธุรกิจ \n\n จำนวน $computer_v คน \n\n  เยี่ยมบ้านเเล้ว',
+          computer_v,
+          Colors.blue),
     ];
 
     var dataaccount = [
-      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาการบัญชี',
-          accounting_n, Colors.grey),
-      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาการบัญชี',
-          accounting_v, Colors.blue),
+      new ClicksPerYear(
+          '\n  การบัญชี \n\n จำนวน $accounting_n คน \n\n ยังไม่เยี่ยมบ้าน',
+          accounting_n,
+          Colors.grey),
+      new ClicksPerYear(
+          '\n  การบัญชี \n\n จำนวน $accounting_v คน \n\n  เยี่ยมบ้านเเล้ว',
+          accounting_v,
+          Colors.blue),
     ];
 
     var datamaintenance = [
-      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างซ่อมบำรุง',
-          maintenance_n, Colors.grey),
-      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างซ่อมบำรุง',
-          maintenance_v, Colors.blue),
+      new ClicksPerYear(
+          '\n  ช่างซ่อมบำรุง \n\n จำนวน $maintenance_n คน \n\n ยังไม่เยี่ยมบ้าน',
+          maintenance_n,
+          Colors.grey),
+      new ClicksPerYear(
+          '\n  ช่างซ่อมบำรุง \n\n จำนวน $maintenance_v คน \n\n  เยี่ยมบ้านเเล้ว',
+          maintenance_v,
+          Colors.blue),
     ];
 
     var dataretail = [
-      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาธุรกิจค้าปลีก',
-          retail_n, Colors.grey),
-      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาธุรกิจค้าปลีก',
-          retail_v, Colors.blue),
+      new ClicksPerYear(
+          '\n  ธุรกิจค้าปลีก \n\n จำนวน $retail_n คน \n\n ยังไม่เยี่ยมบ้าน',
+          retail_n,
+          Colors.grey),
+      new ClicksPerYear(
+          '\n  ธุรกิจค้าปลีก \n\n จำนวน $retail_v คน \n\n  เยี่ยมบ้านเเล้ว',
+          retail_v,
+          Colors.blue),
     ];
 
     var datamechanic = [
-      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างยนต์',
-          mechanic_n, Colors.grey),
-      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างยนต์',
-          mechanic_v, Colors.blue),
+      new ClicksPerYear(
+          '\n  ช่างยนต์ \n\n จำนวน $mechanic_n คน \n\n ยังไม่เยี่ยมบ้าน',
+          mechanic_n,
+          Colors.grey),
+      new ClicksPerYear(
+          '\n  ช่างยนต์ \n\n จำนวน $mechanic_v คน \n\n  เยี่ยมบ้านเเล้ว',
+          mechanic_v,
+          Colors.blue),
     ];
 
     var dataelectrician = [
-      new ClicksPerYear('\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างไฟฟ้ากำลัง',
-          electrician_n, Colors.grey),
-      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างไฟฟ้ากำลัง',
-          electrician_v, Colors.blue),
+      new ClicksPerYear(
+          '\n  ช่างไฟฟ้ากำลัง \n\n จำนวน $electrician_n คน \n\n ยังไม่เยี่ยมบ้าน',
+          electrician_n,
+          Colors.grey),
+      new ClicksPerYear(
+          '\n  ช่างไฟฟ้ากำลัง \n\n จำนวน $electrician_v คน \n\n  เยี่ยมบ้านเเล้ว',
+          electrician_v,
+          Colors.blue),
     ];
 
     var dataelectronic = [
       new ClicksPerYear(
-          '\n ยังไม่เยี่ยมบ้าน  \n\n   แผนกวิชาช่างอิเล็กทรอนิกส์',
+          '\n  ช่างอิเล็กทรอนิกส์ \n\n จำนวน $electronic_n คน \n\n ยังไม่เยี่ยมบ้าน',
           electronic_n,
           Colors.grey),
-      new ClicksPerYear('\n เยี่ยมบ้านเเล้ว  \n\n   แผนกวิชาช่างอิเล็กทรอนิกส์',
-          electronic_v, Colors.blue),
+      new ClicksPerYear(
+          '\n  ช่างอิเล็กทรอนิกส์ \n\n จำนวน $electronic_v คน \n\n  เยี่ยมบ้านเเล้ว',
+          electronic_v,
+          Colors.blue),
     ];
 
     var seriescom = [
@@ -327,31 +371,31 @@ class _AdminTState extends State<AdminT> {
     );
 
     return Scaffold(
-      body: Container(
-        margin: EdgeInsets.only(top: 40),
-        child: Center(
-          child: Column(
-            children: [
-              Text(
+      body: Center(
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 40),
+              child: Text(
                 "ข้อมูลนักเรียน นักศึกษา ณ วันที่  $formatted",
                 style: style,
               ),
-              Expanded(
-                child: new ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    chartWidgetcom,
-                    chartWidgetaccount,
-                    chartWidgetmaintenance,
-                    chartWidgetretail,
-                    chartWidgetmechanic,
-                    chartWidgetelectrician,
-                    chartWidgetelectronic,
-                  ],
-                ),
+            ),
+            Expanded(
+              child: new ListView(
+                scrollDirection: Axis.horizontal,
+                children: <Widget>[
+                  chartWidgetcom,
+                  chartWidgetaccount,
+                  chartWidgetmaintenance,
+                  chartWidgetretail,
+                  chartWidgetmechanic,
+                  chartWidgetelectrician,
+                  chartWidgetelectronic,
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

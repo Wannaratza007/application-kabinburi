@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:KABINBURI/Teacher/view-visithome.dart';
-import 'package:KABINBURI/Teacher/visithome.dart';
+import 'package:KABINBURI/Teacher/view_visit_home.dart';
+import 'package:KABINBURI/Teacher/visit_home.dart';
 import 'package:KABINBURI/model/student_model.dart';
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:KABINBURI/style/connect_api.dart';
@@ -11,8 +13,9 @@ import 'package:KABINBURI/style/contsan.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
-
 import 'package:sweetalert/sweetalert.dart';
+
+import 'edit_student.dart';
 
 class ListdataStudents extends StatefulWidget {
   ListdataStudents({Key key}) : super(key: key);
@@ -41,15 +44,19 @@ class _ListdataStudentsState extends State<ListdataStudents> {
     setState(() {
       deparmentuser = preferences.getString('deparment');
     });
-    var client = http.Client();
     try {
       var _url = '$api/server/student/get-student';
-      var _obj = {
+      var obj = {
         "top": (top).toString(),
         "firstnameSTD": searchname.text.trim(),
         "deparment": deparmentuser,
       };
-      var response = await client.post(_url, body: _obj);
+      var _obj = jsonEncode(obj);
+      var response = await http.post(_url,
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: _obj);
       var res = json.decode(response.body);
       if (res["status"] == true) {
         students = res["result"].map((i) => Student.fromJson(i)).toList();
@@ -58,17 +65,25 @@ class _ListdataStudentsState extends State<ListdataStudents> {
         });
       }
       return true;
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'กรุณาลองใหม่',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
 
   Future apiDeleteStudent(int id) async {
-    var client = http.Client();
     try {
-      var response = await client
-          .post('$api/server/student/teacher-delete', body: {'id': '$id'});
-      var data = convert.jsonDecode(response.body);
+      var obj = {'id': '$id'};
+      var _obj = jsonEncode(obj);
+      var res = await http.post('$api/server/student/teacher-delete',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: _obj);
+      var data = convert.jsonDecode(res.body);
       if (data['status'] == true) {
         SweetAlert.show(
           context,
@@ -80,8 +95,12 @@ class _ListdataStudentsState extends State<ListdataStudents> {
         });
       }
       return data;
-    } finally {
-      client.close();
+    } catch (e) {
+      EdgeAlert.show(context,
+          title: 'กรุณาลองใหม่',
+          description: '$e',
+          gravity: EdgeAlert.TOP,
+          backgroundColor: Colors.red);
     }
   }
 
@@ -106,6 +125,10 @@ class _ListdataStudentsState extends State<ListdataStudents> {
     _refreshController.loadComplete();
   }
 
+  void _callNumber(var number) async {
+    bool res = await FlutterPhoneDirectCaller.callNumber(number);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,20 +140,20 @@ class _ListdataStudentsState extends State<ListdataStudents> {
               child: SmartRefresher(
                 enablePullDown: true,
                 enablePullUp: true,
-                header: WaterDropMaterialHeader(),
+                header: new MaterialClassicHeader(),
                 footer: CustomFooter(
                   builder: (BuildContext context, LoadStatus mode) {
                     Widget body;
                     if (mode == LoadStatus.idle) {
-                      body = Text("pull up load");
+                      body = Text("pull up load", style: hintStyle);
                     } else if (mode == LoadStatus.loading) {
                       body = CupertinoActivityIndicator();
                     } else if (mode == LoadStatus.failed) {
-                      body = Text("Load Failed!Click retry!");
+                      body = Text("Load Failed!Click retry!", style: hintStyle);
                     } else if (mode == LoadStatus.canLoading) {
-                      body = Text("release to load more");
+                      body = Text("release to load more", style: hintStyle);
                     } else {
-                      body = Text("No more Data");
+                      body = Text("No more Data", style: hintStyle);
                     }
                     return Container(
                       height: 55.0,
@@ -141,9 +164,7 @@ class _ListdataStudentsState extends State<ListdataStudents> {
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 onLoading: _onLoading,
-                child: isLoading == true
-                    ? progress()
-                    : (students.length == null ? notedata() : showItem()),
+                child: isLoading == true ? progress() : showItem(),
               ),
             ),
           ),
@@ -152,87 +173,119 @@ class _ListdataStudentsState extends State<ListdataStudents> {
     );
   }
 
-  Widget notedata() {
-    return Center(
-      child: Container(
-        child: Text(
-          'ไม่พบข้อมูล',
-          style: TextStyle(
-            fontSize: 50.0,
-            fontWeight: FontWeight.w900,
-            color: mainColor,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget showItem() {
-    return ListView.builder(
-      itemCount: students.length,
-      itemBuilder: (context, i) => Container(
-        padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
-        child: Card(
-          elevation: 3.0,
-          child: ListTile(
-            dense: true,
-            leading: Icon(Icons.account_circle),
-            title: Row(
-              children: [
-                Text(students[i].firstnameStd, style: textlist),
-                SizedBox(width: 10.0),
-                Text(students[i].lastnameStd, style: textlist)
-              ],
-            ),
-            subtitle: Container(
-              margin: EdgeInsets.only(top: 5.0),
-              child: Text("${students[i].studygroup}", style: textlistsub),
-            ),
-            trailing: Container(
-              margin: EdgeInsets.only(right: 10.0),
-              child: IconButton(
-                icon: Icon(Icons.more_vert, size: 35.0),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => Container(
-                      child: Wrap(
-                        children: <Widget>[
-                          ListTile(
-                            leading: new Icon(Icons.assignment_turned_in),
-                            title: new Text('เยี่ยมบ้าน'),
-                            onTap: () => {
-                              Navigator.of(context).pop(),
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => VisitHomePage(
-                                      idStudent: students[i].student),
-                                ),
-                              )
-                            },
-                          ),
-                          ListTile(
-                            // enabled: false,
-                            enabled: students[i].isVisit == 0 ? false : true,
-                            leading: new Icon(Icons.assignment_ind),
-                            title: new Text('บันทึกการเยี่ยมบ้าน'),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ViewVisitHomePage(
-                                          idStudent: students[i].student)));
-                            },
-                          ),
-                          GestureDetector(
-                            child: ListTile(
+    return students.length == null
+        ? notedata()
+        : ListView.builder(
+            itemCount: students.length,
+            itemBuilder: (context, i) => Container(
+              padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
+              child: Card(
+                elevation: 3.0,
+                child: ListTile(
+                  dense: true,
+                  leading: Icon(Icons.account_circle),
+                  title: Row(
+                    children: [
+                      Text(students[i].firstnameStd, style: textlist),
+                      SizedBox(width: 10.0),
+                      Text(students[i].lastnameStd, style: textlist)
+                    ],
+                  ),
+                  subtitle: Container(
+                    margin: EdgeInsets.only(top: 5.0),
+                    child:
+                        Text("${students[i].studygroup}", style: textlistsub),
+                  ),
+                  trailing: Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: Icon(Icons.more_vert, size: 35.0),
+                  ),
+                  onTap: () => {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => Container(
+                        child: Wrap(
+                          children: <Widget>[
+                            // Phone
+                            /*
+                      ListTile(
+                        enabled: students[i].phonesGd == '' ||
+                                students[i].phonesG == null
+                            ? false
+                            : true,
+                        leading: new Icon(Icons.phone),
+                        title: new Text('โทรหาผู้ปกครอง', style: hintStyle),
+                        onTap: () {
+                          _callNumber('${students[i].phonesGd}');
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ListTile(
+                        enabled: students[i].phonesStd == '' ||
+                                students[i].phonesStd == null
+                            ? false
+                            : true,
+                        leading: new Icon(Icons.phone),
+                        title: new Text('โทรหานักเรียน นักศึกษา',
+                            style: hintStyle),
+                        onTap: () {
+                          _callNumber('${students[i].phonesStd}');
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      */
+                            // End Phone
+
+                            //  Edit Data Student
+                            // /*
+                            ListTile(
+                              leading: new Icon(Icons.create),
+                              title: new Text('แก้ไขข้อมูล', style: hintStyle),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditDataStudent(
+                                            data: students[i])));
+                              },
+                            ),
+                            // */
+                            //  End Edit Data Student
+
+                            ListTile(
+                              leading: new Icon(Icons.assignment_turned_in),
+                              title: new Text('เยี่ยมบ้าน', style: hintStyle),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            VisitHome(data: students[i])));
+                              },
+                            ),
+                            ListTile(
+                              enabled: students[i].isVisit == 0 ? false : true,
+                              leading: new Icon(Icons.assignment_ind),
+                              title: new Text('บันทึกการเยี่ยมบ้าน',
+                                  style: hintStyle),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ViewVistHome(data: students[i])));
+                              },
+                            ),
+                            ListTile(
                               leading: new Icon(
                                 Icons.delete,
                                 color: Colors.red,
                               ),
-                              title: Text('ลบข้อมูล'),
+                              title: Text('ลบข้อมูล', style: hintStyle),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 SweetAlert.show(context,
@@ -250,18 +303,15 @@ class _ListdataStudentsState extends State<ListdataStudents> {
                                 });
                               },
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  );
-                },
+                  },
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 
   Widget tabSearch() {
@@ -277,20 +327,21 @@ class _ListdataStudentsState extends State<ListdataStudents> {
                 apiSetData();
               });
             },
-            style: TextStyle(fontSize: 18.0),
+            style: TextStyle(fontSize: 18.0, fontFamily: 'Mali'),
             controller: searchname,
             decoration: InputDecoration(
               hintText: 'ชื่อนักเรียน  นักศึกษา',
+              hintStyle: hintStyle,
               border: InputBorder.none,
             ),
           ),
           trailing: IconButton(
             icon: Icon(Icons.cancel),
             onPressed: () {
+              apiSetData();
               hidekeyboard();
-              searchname.clear();
               setState(() {
-                apiSetData();
+                searchname.clear();
               });
             },
           ),
