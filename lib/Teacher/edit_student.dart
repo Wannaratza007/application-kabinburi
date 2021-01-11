@@ -96,8 +96,6 @@ class _EditDataStudentState extends State<EditDataStudent> {
       print(grade);
       print(year[0]);
       print(year[1]);
-      selectedValueprovince = grade;
-      print("selectedValueprovince  = " + selectedValueprovince);
     });
   }
 

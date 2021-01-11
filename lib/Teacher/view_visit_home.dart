@@ -52,8 +52,8 @@ class _ViewVistHomeState extends State<ViewVistHome> {
   }
 
   Future sharefile() async {
-    var response = await http.get(
-        'https://shop.esys.eu/media/image/6f/8f/af/amlog_transport-berwachung.jpg');
+    var response =
+        await http.get('http://www.africau.edu/images/default/sample.pdf');
     var res = jsonDecode(response.body);
     print(res);
     print(res);
