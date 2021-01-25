@@ -168,7 +168,7 @@ class _ListAccountingState extends State<ListAccounting> {
   }
 
   Widget showItem() {
-    return account.length == null
+    return account.length == 0
         ? notedata()
         : ListView.builder(
             itemCount: account.length,
@@ -177,6 +177,38 @@ class _ListAccountingState extends State<ListAccounting> {
               child: Card(
                 elevation: 3.0,
                 child: ListTile(
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      child: Wrap(
+                        children: <Widget>[
+                          ListTile(
+                            leading: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            title: Text('ลบข้อมูล', style: hintStyle),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              SweetAlert.show(context,
+                                  title: "คุณต้องการลบข้อมูล",
+                                  subtitle:
+                                      "คุณ  ${account[i].firstname}  แผนก${account[i].deparmentName}   หรือไม่ ?",
+                                  style: SweetAlertStyle.confirm,
+                                  showCancelButton: true,
+                                  // ignore: missing_return
+                                  onPress: (bool isConfirm) {
+                                if (isConfirm) {
+                                  apideleteAccount(account[i].userId);
+                                  return false;
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   leading: Icon(Icons.account_circle),
                   title: Row(
                     children: [
@@ -196,43 +228,7 @@ class _ListAccountingState extends State<ListAccounting> {
                   ),
                   trailing: Container(
                     margin: EdgeInsets.only(right: 10.0),
-                    child: IconButton(
-                      icon: Icon(Icons.more_vert, size: 35.0),
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => Container(
-                            child: Wrap(
-                              children: <Widget>[
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                  ),
-                                  title: Text('ลบข้อมูล', style: hintStyle),
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                    SweetAlert.show(context,
-                                        title: "คุณต้องการลบข้อมูล",
-                                        subtitle:
-                                            "คุณ  ${account[i].firstname}  แผนก${account[i].deparmentName}   หรือไม่ ?",
-                                        style: SweetAlertStyle.confirm,
-                                        showCancelButton: true,
-                                        // ignore: missing_return
-                                        onPress: (bool isConfirm) {
-                                      if (isConfirm) {
-                                        apideleteAccount(account[i].userId);
-                                        return false;
-                                      }
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                    child: Icon(Icons.more_vert, size: 35.0)
                   ),
                 ),
               ),

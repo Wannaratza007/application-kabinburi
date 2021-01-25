@@ -126,7 +126,7 @@ class _ListdataStudentsState extends State<ListdataStudents> {
   }
 
   void _callNumber(var number) async {
-    bool res = await FlutterPhoneDirectCaller.callNumber(number);
+    await FlutterPhoneDirectCaller.callNumber(number);
   }
 
   @override
@@ -174,7 +174,7 @@ class _ListdataStudentsState extends State<ListdataStudents> {
   }
 
   Widget showItem() {
-    return students.length == null
+    return students.length == 0
         ? notedata()
         : ListView.builder(
             itemCount: students.length,
@@ -238,7 +238,7 @@ class _ListdataStudentsState extends State<ListdataStudents> {
                             // End Phone
 
                             //  Edit Data Student
-                            // /*
+                            /*
                             ListTile(
                               leading: new Icon(Icons.create),
                               title: new Text('แก้ไขข้อมูล', style: hintStyle),
@@ -251,19 +251,22 @@ class _ListdataStudentsState extends State<ListdataStudents> {
                                             data: students[i])));
                               },
                             ),
-                            // */
+                            */
                             //  End Edit Data Student
 
                             ListTile(
                               leading: new Icon(Icons.assignment_turned_in),
                               title: new Text('เยี่ยมบ้าน', style: hintStyle),
-                              onTap: () {
+                              onTap: () async {
                                 Navigator.of(context).pop();
-                                Navigator.push(
+                                var res = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             VisitHome(data: students[i])));
+                                if (res) {
+                                  apiSetData();
+                                }
                               },
                             ),
                             ListTile(

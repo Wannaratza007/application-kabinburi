@@ -1,4 +1,4 @@
-import 'package:KABINBURI/Administrator/main_Admin.dart';
+import 'package:KABINBURI/Administrator/main_admin.dart';
 import 'package:KABINBURI/Teacher/main_Teacher.dart';
 import 'package:KABINBURI/sign_in.dart';
 import 'package:KABINBURI/style/singout.dart';

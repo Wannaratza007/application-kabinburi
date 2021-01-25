@@ -25,7 +25,7 @@ class VisitHome extends StatefulWidget {
 class _VisitHomeState extends State<VisitHome> {
   final _formKey = GlobalKey<FormState>();
 
-  double lat, long;
+  double lat, long = 0.0;
 
   File _imagevisit;
   File _imageAddress;
@@ -47,6 +47,7 @@ class _VisitHomeState extends State<VisitHome> {
   bool islivingStatus = false;
   bool ischaracteristicsAddress = false;
   bool iscomeToSchoolBy = false;
+  bool isCheckSignature = false;
 
   var relevanceParents;
   var livingStatus;
@@ -92,18 +93,16 @@ class _VisitHomeState extends State<VisitHome> {
   void initState() {
     super.initState();
     setdata();
-    // findlatlong();
+    findlatlong();
+    print('longitude :+ ${widget.data.longitude}');
+    print('latitude : + ${widget.data.latitude}');
   }
 
   // Get Location
-  /*
   Future findlatlong() async {
-    if (widget.data.latitude == null || widget.data.latitude == '') {
-      print("get location");
+    if (widget.data.longitude == '' || widget.data.latitude == null) {
       LocationData _locationData = await Location().getLocation();
-      print("_locationData    $_locationData");
-      print(_locationData);
-      print(_locationData);
+      print("get location");
       setState(() {
         lat = _locationData.latitude;
         long = _locationData.longitude;
@@ -123,13 +122,10 @@ class _VisitHomeState extends State<VisitHome> {
       Marker(
         markerId: MarkerId("KabinburiApp"),
         position: LatLng(lat, long),
-        infoWindow: InfoWindow(
-          title: "ตำแหน่งของคุณ",
-        ),
+        infoWindow: InfoWindow(title: "บ้านนักศึกษา"),
       )
     ].toSet();
   }
-  */
   // End Get Location
 
   Future setdata() async {
@@ -334,8 +330,8 @@ class _VisitHomeState extends State<VisitHome> {
           "suggestion": suggestion.text.trim(),
           "nameGD": nameGD.text.trim(),
           "visit_By": visitBy,
-          "latitude": lat,
-          "longitude": long,
+          "latitude": (lat).toString(),
+          "longitude": (long).toString(),
         };
 
         var _obj = jsonEncode(obj);
@@ -347,7 +343,7 @@ class _VisitHomeState extends State<VisitHome> {
           body: _obj,
         );
         var data = jsonDecode(response.body);
-        if (data["status"] == true) {
+        if (data["status"]) {
           setState(() {
             saveing = true;
           });
@@ -392,22 +388,31 @@ class _VisitHomeState extends State<VisitHome> {
         leading: IconButton(
           color: Colors.black,
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.border_color),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              bool res = await Navigator.push<bool>(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Signture(
-                        nameGD: widget.data.prefixGd +
-                            widget.data.firstnameGd +
-                            "  " +
-                            widget.data.lastnameGd,
-                        stdID: widget.data.student)),
+                  builder: (context) => Signture(
+                    nameGD: widget.data.prefixGd +
+                        widget.data.firstnameGd +
+                        "  " +
+                        widget.data.lastnameGd,
+                    stdID: widget.data.student,
+                  ),
+                ),
               );
+              if (res) {
+                setState(() {
+                  isCheckSignature = true;
+                });
+              }
             },
           )
         ],
@@ -425,90 +430,87 @@ class _VisitHomeState extends State<VisitHome> {
 
   Widget viewdata() {
     return isCheckdata == false
-        ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('ไม่พบข้อมูล', style: hintStyle)],
-            ),
-          )
+        ? notedata()
         : Form(
             key: _formKey,
             child: Container(
               padding: EdgeInsets.all(5.0),
               child: Card(
                 elevation: 5.0,
-                child: ListView(children: <Widget>[
-                  SizedBox(height: 15.0),
-                  titleSub('ข้อมูลนักศึกษา'),
-                  SizedBox(height: 15.0),
-                  showDatas(nameStd),
-                  showDatas('แผนกวิชา   ${widget.data.deparmentName}'),
-                  border(),
-                  // widget.data.longitude == null || widget.data.longitude == ''
-                  //     ? Container()
-                  //     : showMap(),
-                  // widget.data.longitude == null || widget.data.longitude == ''
-                  //     ? Container()
-                  //     : border(),
-                  titleSub('รูปภาพการเยี่ยมบ้าน'),
-                  SizedBox(height: 15.0),
-                  buildpickimagevisit(context),
-                  SizedBox(height: 15.0),
-                  titleSub('รูปภาพที่อยู่'),
-                  SizedBox(height: 15.0),
-                  buildpickimageAddress(context),
-                  SizedBox(height: 15.0),
-                  titleSub('ผู้ปกครองเกี่ยวข้องกับนักเรียนเป็น'),
-                  SizedBox(height: 15.0),
-                  selectedValueRelevanceParents(),
-                  isrelevanceParents == true
-                      ? showcomment(
-                          textrelevanceParents, 'อื่น ๆ  ระบุ...', true)
-                      : SizedBox(height: 15.0),
-                  titleSub('สถานะที่อยู่อาศัย'),
-                  SizedBox(height: 15.0),
-                  selectedValueLivingStatus(),
-                  islivingStatus == true
-                      ? showcomment(textlivingStatus, 'อื่น ๆ  ระบุ...', true)
-                      : SizedBox(height: 15.0),
-                  titleSub('ลักษณะของที่อยู่'),
-                  SizedBox(height: 15.0),
-                  selectedValueCharacteristicsAddress(),
-                  ischaracteristicsAddress == true
-                      ? showcomment(
-                          textcharacteristicsAddress, 'อื่น ๆ  ระบุ...', true)
-                      : SizedBox(height: 15.0),
-                  titleSub('นักเรียนเดินทางมาโรงเรียน โดย'),
-                  SizedBox(height: 15.0),
-                  selectedValueComeToSchoolBy(),
-                  iscomeToSchoolBy == true
-                      ? showcomment(textcomeToSchoolBy, 'อื่น ๆ  ระบุ...', true)
-                      : SizedBox(height: 15.0),
-                  titleSub('พฤติกรรมของนักศึกษา'),
-                  showcomment(behaviorD, 'พฤติกรรม ด้านดี', true),
-                  showcomment(behaviorNotD, 'พฤติกรรม ที่ต้องปรับหรุง', true),
-                  SizedBox(height: 15.0),
-                  titleSub('ปัญหาของนักศึกษา'),
-                  showcomment(problem, 'พฤติกรรม ด้านดี', true),
-                  SizedBox(height: 15.0),
-                  titleSub('ข้อเสนอแนะ'),
-                  showcomment(suggestion, 'อื่นๆ...', true),
-                  SizedBox(height: 15.0),
-                  titleSub('ลงชื่อผู้ปกครอง'),
-                  showcomment(nameGD, 'ชื่อผู้ปกครอง', true),
-                  SizedBox(height: 15.0),
-                  titleSub('ลงชื่อครูผู้ไปเยี่ยม'),
-                  showcomment(nameTHVisit, 'ลงชื่อครูผู้ไปเยี่ยม', false),
-                  buttonSVAE(),
-                  SizedBox(height: 15.0),
-                ]),
+                child: ListView(
+                  children: <Widget>[
+                    SizedBox(height: 15.0),
+                    titleSub('ข้อมูลนักศึกษา'),
+                    SizedBox(height: 15.0),
+                    showDatas(nameStd),
+                    showDatas('แผนกวิชา  ${widget.data.deparmentName}'),
+                    border(),
+                    widget.data.longitude == '' || widget.data.longitude == null
+                        ? Container()
+                        : showMap(),
+                    widget.data.longitude == '' || widget.data.longitude == null
+                        ? Container()
+                        : border(),
+                    titleSub('รูปภาพการเยี่ยมบ้าน'),
+                    SizedBox(height: 15.0),
+                    buildpickimagevisit(context),
+                    SizedBox(height: 15.0),
+                    titleSub('รูปภาพที่อยู่'),
+                    SizedBox(height: 15.0),
+                    buildpickimageAddress(context),
+                    SizedBox(height: 15.0),
+                    titleSub('ความเกี่ยวข้องของผู้ปกครอง'),
+                    SizedBox(height: 15.0),
+                    selectedValueRelevanceParents(),
+                    isrelevanceParents == true
+                        ? showcomment(
+                            textrelevanceParents, 'อื่น ๆ  ระบุ...', true)
+                        : SizedBox(height: 15.0),
+                    titleSub('สถานะที่อยู่อาศัย'),
+                    SizedBox(height: 15.0),
+                    selectedValueLivingStatus(),
+                    islivingStatus == true
+                        ? showcomment(textlivingStatus, 'อื่น ๆ  ระบุ...', true)
+                        : SizedBox(height: 15.0),
+                    titleSub('ลักษณะของที่อยู่'),
+                    SizedBox(height: 15.0),
+                    selectedValueCharacteristicsAddress(),
+                    ischaracteristicsAddress == true
+                        ? showcomment(
+                            textcharacteristicsAddress, 'อื่น ๆ  ระบุ...', true)
+                        : SizedBox(height: 15.0),
+                    titleSub('นักเรียนเดินทางมาโรงเรียน โดย'),
+                    SizedBox(height: 15.0),
+                    selectedValueComeToSchoolBy(),
+                    iscomeToSchoolBy == true
+                        ? showcomment(
+                            textcomeToSchoolBy, 'อื่น ๆ  ระบุ...', true)
+                        : SizedBox(height: 15.0),
+                    titleSub('พฤติกรรมของนักศึกษา'),
+                    showcomment(behaviorD, 'พฤติกรรม ด้านดี', true),
+                    showcomment(behaviorNotD, 'พฤติกรรม ที่ต้องปรับหรุง', true),
+                    SizedBox(height: 15.0),
+                    titleSub('ปัญหาของนักศึกษา'),
+                    showcomment(problem, 'ปัญหาของนักศึกษา', true),
+                    SizedBox(height: 15.0),
+                    titleSub('ข้อเสนอแนะ'),
+                    showcomment(suggestion, 'อื่นๆ...', true),
+                    SizedBox(height: 15.0),
+                    titleSub('ลงชื่อผู้ปกครอง'),
+                    showcomment(nameGD, 'ชื่อผู้ปกครอง', true),
+                    SizedBox(height: 15.0),
+                    titleSub('ลงชื่อครูผู้ไปเยี่ยม'),
+                    showcomment(nameTHVisit, 'ลงชื่อครูผู้ไปเยี่ยม', false),
+                    buttonSVAE(),
+                    SizedBox(height: 15.0),
+                  ],
+                ),
               ),
             ),
           );
   }
 
   // Show GoogleMap
-  /*
   Widget showMap() {
     LatLng latLng = LatLng(lat, long);
     CameraPosition camera = CameraPosition(target: latLng, zoom: 16.0);
@@ -527,7 +529,6 @@ class _VisitHomeState extends State<VisitHome> {
       ),
     );
   }
-  */
   // End Show GoogleMap
 
   Widget buttonSVAE() {
@@ -549,36 +550,48 @@ class _VisitHomeState extends State<VisitHome> {
         color: Colors.blue,
         onPressed: () {
           hidekeyboard();
-          if (_formKey.currentState.validate()) {
-            if (saveing) {
-              SweetAlert.show(context,
-                  subtitle: "คุณต้องการบันทึกข้อมูลหรือไม่ ?",
-                  style: SweetAlertStyle.confirm,
-                  // ignore: missing_return
-                  showCancelButton: true, onPress: (bool isConfirm) {
-                if (isConfirm) {
-                  SweetAlert.show(context,
-                      subtitle: "Saveing....", style: SweetAlertStyle.loading);
-                  setState(() {
-                    saveing = false;
-                  });
-                  apisaveDataVisit();
-                } else {
-                  SweetAlert.show(context,
-                      subtitle: "Canceled!", style: SweetAlertStyle.error);
-                  setState(() {
-                    saveing = false;
-                  });
-                }
-              });
-            } else {
-              EdgeAlert.show(context,
-                  title: 'กำลังบันทึกข้อมูล',
-                  description: 'กรุณารอสักครู่ค่ะ...',
-                  gravity: EdgeAlert.TOP,
-                  backgroundColor: Colors.blue,
-                  icon: Icons.check_circle_outline);
+          if (isCheckSignature) {
+            if (_formKey.currentState.validate()) {
+              if (saveing) {
+                SweetAlert.show(context,
+                    subtitle: "คุณต้องการบันทึกข้อมูลหรือไม่ ?",
+                    style: SweetAlertStyle.confirm,
+                    // ignore: missing_return
+                    showCancelButton: true, onPress: (bool isConfirm) {
+                  if (isConfirm) {
+                    SweetAlert.show(context,
+                        subtitle: "Saveing....",
+                        style: SweetAlertStyle.loading);
+                    setState(() {
+                      saveing = false;
+                    });
+                    apisaveDataVisit();
+                  } else {
+                    SweetAlert.show(context,
+                        subtitle: "Canceled!", style: SweetAlertStyle.error);
+                    setState(() {
+                      saveing = false;
+                    });
+                  }
+                });
+              } else {
+                EdgeAlert.show(context,
+                    title: 'กำลังบันทึกข้อมูล',
+                    description: 'กรุณารอสักครู่ค่ะ...',
+                    gravity: EdgeAlert.TOP,
+                    backgroundColor: Colors.blue,
+                    icon: Icons.check_circle_outline);
+              }
             }
+          } else {
+            EdgeAlert.show(
+              context,
+              title: 'กรุณาเซ็นชื่อก่อนค่ะ',
+              // description: 'กรุณารอสักครู่ค่ะ...',
+              gravity: EdgeAlert.TOP,
+              backgroundColor: Colors.blue,
+              icon: Icons.check_circle_outline,
+            );
           }
         },
       ),
@@ -771,8 +784,7 @@ class _VisitHomeState extends State<VisitHome> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 icon: Icon(Icons.arrow_drop_down, color: indexColor),
-                hint: Text("ผู้ปกครองเกี่ยวข้องกับนักเรียนเป็น",
-                    style: hintStyle),
+                hint: Text("ความเกี่ยวข้องของผู้ปกครอง", style: hintStyle),
                 value: relevanceParents,
                 isDense: true,
                 onChanged: (newValue) {
@@ -940,5 +952,4 @@ class _VisitHomeState extends State<VisitHome> {
       ),
     );
   }
-
 }

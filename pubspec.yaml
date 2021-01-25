@@ -43,7 +43,7 @@ dependencies:
   google_maps_flutter: ^0.5.33
   location: ^2.5.4
   flutter_phone_direct_caller: ^1.0.1
-  esys_flutter_share: ^1.0.2
+  esys_flutter_share: ^1.0.0
 
 dev_dependencies:
   flutter_test:

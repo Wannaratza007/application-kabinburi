@@ -168,7 +168,7 @@ class _ListDataDeletePageState extends State<ListDataDeletePage> {
 
   Widget showItem() {
     return 
-    students.length == null ?
+    students.length == 0 ?
     notedata() :
     ListView.builder(
       itemCount: students.length,

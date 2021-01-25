@@ -13,13 +13,14 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="KABINBURI"
         android:icon="@mipmap/ic_launcher">
+
         <!-- GOOGLE -->
-        <!-- <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyCDTAD0zeMHZrtdBXrGh8WNPKD3rHfEKA0"/> -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCDTAD0zeMHZrtdBXrGh8WNPKD3rHfEKA0"/>
 
         <!-- LONGDO -->
-        <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="10e9d24fdd36aa77b71183a5422e4d48"/>
+        <!-- <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="10e9d24fdd36aa77b71183a5422e4d48"/> -->
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

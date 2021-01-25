@@ -43,6 +43,7 @@ class _SigntureState extends State<Signture> {
           },
           body: _obj);
       var res = json.decode(response.body);
+      print(res);
       if (res["status"]) {
         print('Succes');
         setState(() {
@@ -98,9 +99,10 @@ class _SigntureState extends State<Signture> {
 
   Widget iconBack(BuildContext context) {
     return IconButton(
-      color: Colors.black,
-      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-      onPressed: () => Navigator.of(context).pop(),
-    );
+        color: Colors.black,
+        icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+        onPressed: () {
+          Navigator.pop(context, false);
+        });
   }
 }

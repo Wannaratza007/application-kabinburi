@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:KABINBURI/Administrator/main_Admin.dart';
+import 'package:KABINBURI/Administrator/main_admin.dart';
 import 'package:KABINBURI/Teacher/main_Teacher.dart';
 import 'package:KABINBURI/model/user_model.dart';
 import 'package:KABINBURI/style/connect_api.dart';
@@ -276,7 +276,7 @@ class _SignInPageState extends State<SignInPage> {
         onPressed: () {
           SweetAlert.show(context,
               subtitle: "loading...", style: SweetAlertStyle.loading);
-          islogin == true
+          islogin
               ? EdgeAlert.show(context,
                   title: 'กรุณารอสักครู่ค่ะ...',
                   gravity: EdgeAlert.TOP,

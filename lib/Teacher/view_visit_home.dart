@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:KABINBURI/model/student_model.dart';
 import 'package:KABINBURI/style/connect_api.dart';
 import 'package:KABINBURI/style/contsan.dart';
@@ -49,19 +47,6 @@ class _ViewVistHomeState extends State<ViewVistHome> {
   void initState() {
     super.initState();
     setdata();
-  }
-
-  Future sharefile() async {
-    var response =
-        await http.get('http://www.africau.edu/images/default/sample.pdf');
-    var res = jsonDecode(response.body);
-    print(res);
-    print(res);
-    // var request = await HttpClient().getUrl(Uri.parse(
-    //     'https://shop.esys.eu/media/image/6f/8f/af/amlog_transport-berwachung.jpg'));
-    // var response = await request.close();
-    // Uint8List bytes = await consolidateHttpClientResponseBytes(response);
-    // await Share.file('ESYS AMLOG', 'amlog.jpg', bytes, 'image/jpg');
   }
 
   Future setdata() async {
@@ -133,8 +118,20 @@ class _ViewVistHomeState extends State<ViewVistHome> {
               });
         } else if (type == 'share') {
           print('share File');
-          sharefile();
-          // saveAndShare(res);
+          sharefile(res).then((value) => {
+                if (value)
+                  {
+                    SweetAlert.show(
+                      context,
+                      subtitle: "success",
+                      style: SweetAlertStyle.success,
+                      // ignore: missing_return
+                      onPress: (isConfirm) {
+                        Navigator.pop(context, true);
+                      },
+                    ),
+                  }
+              });
         }
       }
     } catch (e) {
@@ -145,6 +142,18 @@ class _ViewVistHomeState extends State<ViewVistHome> {
           gravity: EdgeAlert.TOP,
           backgroundColor: Colors.red);
     }
+  }
+
+  Future sharefile(var fileName) async {
+    final filename = "บันทึกการเยี่ยมบ้าน" +
+        widget.data.firstnameStd +
+        "  " +
+        widget.data.lastnameStd +
+        ".pdf";
+    var response = await http.get('$api/form/pdf/$fileName');
+    var res = response.bodyBytes;
+    await Share.file('', filename, res.buffer.asUint8List(), 'file/pdf');
+    return true;
   }
 
   Future printFile(var filepdfname) async {
@@ -165,46 +174,6 @@ class _ViewVistHomeState extends State<ViewVistHome> {
     }
   }
 
-  Future saveAndShare(var filepdfname) async {
-    try {
-      // final filename = "บันทึกการเยี่ยมบ้าน" +
-      //     widget.data.firstnameStd +
-      //     "  " +
-      //     widget.data.lastnameStd +
-      //     ".pdf";
-      // final RenderBox box = context.findRenderObject();
-      // if (Platform.isAndroid) {
-      //   final url = "$api/form/pdf/$filepdfname";
-      //   var response = await get(url);
-      //   final documentDirectory = (await getExternalStorageDirectory()).path;
-      //   File file = new File('$documentDirectory/$filename');
-      //   file.writeAsBytesSync(response.bodyBytes);
-
-      //   setState(() {
-      //     filePaths.add('$documentDirectory/$filename');
-      //   });
-      //   Share.shareFiles(filePaths,
-      //       subject: '$filename',
-      //       text: '',
-      //       sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-      //   SweetAlert.show(
-      //     context,
-      //     subtitle: "success",
-      //     style: SweetAlertStyle.success,
-      //     // ignore: missing_return
-      //     onPress: (isConfirm) {
-      //       Navigator.pop(context, true);
-      //     },
-      //   );
-      // }
-      // setState(() {
-      //   filePaths = [];
-      // });
-    } catch (e) {
-      SweetAlert.show(context, subtitle: "$e", style: SweetAlertStyle.error);
-    }
-  }
-
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -214,25 +183,13 @@ class _ViewVistHomeState extends State<ViewVistHome> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: isloadData == false
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [progress()],
-              ),
-            )
-          : viewData(context),
+      body: isloadData == false ? progress() : viewData(context),
     );
   }
 
   Widget viewData(BuildContext context) {
     return isCheckdata == false
-        ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('ไม่พบข้อมูล', style: hintStyle)],
-            ),
-          )
+        ? notedata()
         : ListView(children: <Widget>[
             SizedBox(height: 15.0),
             titleSub('ข้อมูลนักศึกษา'),
@@ -288,8 +245,8 @@ class _ViewVistHomeState extends State<ViewVistHome> {
             SizedBox(height: 15.0),
             titleSub('ชื่อครูผู้ไปเยี่ยม'),
             inputcomment(nameTHVisit, 'ชื่อผู้ปกครอง'),
+            // buttonSVAEShare(),
             buttonPrint(),
-            buttonSVAEShare(),
             SizedBox(height: 15.0),
           ]);
   }
@@ -332,10 +289,9 @@ class _ViewVistHomeState extends State<ViewVistHome> {
         textColor: Colors.white,
         color: Colors.blue,
         onPressed: () {
-          sharefile();
-          // getPDF('share');
-          // SweetAlert.show(context,
-          //     subtitle: "loading...", style: SweetAlertStyle.loading);
+          getPDF('share');
+          SweetAlert.show(context,
+              subtitle: "loading...", style: SweetAlertStyle.loading);
         },
       ),
     );
@@ -372,6 +328,8 @@ class _ViewVistHomeState extends State<ViewVistHome> {
           ? notedata()
           : CachedNetworkImage(
               imageUrl: '$api/image/address/${widget.data.imageMap}',
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
               fit: BoxFit.cover,
             ),
     );
@@ -389,6 +347,8 @@ class _ViewVistHomeState extends State<ViewVistHome> {
           ? notedata()
           : CachedNetworkImage(
               imageUrl: '$api/image/visit/${widget.data.imageVisit}',
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
               fit: BoxFit.cover,
             ),
     );

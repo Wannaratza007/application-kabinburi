@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:KABINBURI/Administrator/main_Admin.dart';
+import 'package:KABINBURI/Administrator/main_admin.dart';
 import 'package:KABINBURI/style/contsan.dart';
 import 'package:KABINBURI/style/singout.dart';
 import 'package:edge_alert/edge_alert.dart';

@@ -380,7 +380,7 @@ class _EditDataStudentState extends State<EditDataStudent> {
     return SearchableDropdown.single(
       displayClearIcon: false,
       items: itemsListprovince,
-      value: selectedValueprovince,
+      value: Text('$selectedValueprovince'),
       label: Container(
         child: Text(
           "จังหวัด",

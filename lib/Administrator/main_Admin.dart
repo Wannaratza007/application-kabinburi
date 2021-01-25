@@ -1,5 +1,5 @@
-import 'package:KABINBURI/Administrator/add_user_teacher.dart';
-import 'package:KABINBURI/Administrator/dashboard.dart';
+import 'package:KABINBURI/Administrator/add_account.dart';
+import 'package:KABINBURI/Administrator/dashboard_admin.dart';
 import 'package:KABINBURI/Administrator/list_data_delete.dart';
 import 'package:KABINBURI/Administrator/profile.dart';
 import 'package:KABINBURI/style/contsan.dart';
